@@ -88,7 +88,7 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
   }),
 );
 
-test('playlist handoff copies the current episode and native captions still toggle', { timeout: 120_000 }, (t) =>
+test('playlist handoffs and native captions preserve Watch controls', { timeout: 120_000 }, (t) =>
   withLivePage(async (page, context) => {
     const playlist = 'PLav47HAVZMjnTFVZL-aImCQIC0uLZtNCz';
     const sintel = 'eRsGyueVLvQ';
@@ -145,5 +145,36 @@ test('playlist handoff copies the current episode and native captions still togg
     }, before);
     assert.equal(await host.count(), 1);
     t.diagnostic('Toggled native captions after the playlist handoff');
+
+    await t.test('native English track selection', async () => {
+      const settings = player.locator('.ytp-settings-button');
+      await player.hover();
+      await settings.click();
+      const subtitleMenu = player.getByRole('menuitem', { name: /subtitles/i });
+      await subtitleMenu.click();
+      const english = player.getByRole('menuitemradio', { name: /^English$/i });
+      await english.click();
+      await subtitleMenu.getByText('English', { exact: true }).waitFor();
+    });
+
+    const next = new URL(await player.locator('.ytp-next-button').getAttribute('href'), origin);
+    const nextId = next.searchParams.get('v');
+    assert.match(nextId, /^[\w-]{11}$/);
+    assert.notEqual(nextId, sintel);
+    const end = await media.evaluate((video) => Math.floor(video.duration) - 4);
+    assert.ok(end > 128);
+    await page.goto(origin + '/watch?v=' + sintel + '&list=' + playlist + '&t=' + end + 's', {
+      waitUntil: 'domcontentloaded',
+    });
+    await media.evaluate((video) => { video.muted = true; });
+    if (await media.evaluate((video) => video.paused)) {
+      await player.hover();
+      await player.locator('.ytp-play-button').click();
+    }
+    await page.waitForURL((url) => url.searchParams.get('v') === nextId && url.searchParams.get('list') === playlist);
+    await host.waitFor();
+    assert.equal(await host.count(), 1);
+    await assertTimeLink(nextId, 6);
+    t.diagnostic('Native end-of-video advancement mounted one control and copied the next episode timestamp');
   }),
 );

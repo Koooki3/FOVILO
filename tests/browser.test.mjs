@@ -42,7 +42,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
     await context.route('**/*', (route) => {
       if (route.request().url().startsWith('chrome-extension://')) return route.continue();
-      if (route.request().url() !== origin + '/') return route.abort();
+      if (![origin + '/', origin + watch(first)].includes(route.request().url())) return route.abort();
       return route.fulfill({ contentType: 'text/html', body: `
         <!doctype html><title>YouTube fixture</title>
         <ytd-watch-flexy video-id="${first}">
@@ -158,6 +158,17 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
       await new Promise((resolve) => setTimeout(resolve, 900));
       document.body.append(root);
     }, watch(first));
+    await page.locator(host).waitFor();
+    assert.equal(await page.locator(host).count(), 1);
+
+    await manager.goto('chrome://extensions/');
+    const browserToggle = extension.locator('#enableToggle');
+    await browserToggle.click();
+    await page.reload();
+    await page.getByRole('heading', { name: 'Native title' }).waitFor();
+    assert.equal(await page.locator(host).count(), 0);
+    await browserToggle.click();
+    await page.reload();
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
   } finally {
