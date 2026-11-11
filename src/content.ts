@@ -80,7 +80,10 @@ function mount(id: string, anchor: Element): Mounted {
     input { box-sizing: border-box; max-inline-size: 100%; }
     button:focus-visible, input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
     strong { margin-inline-end: auto; }
-    [role=status]:empty { display: none; }
+    [role=status]:empty {
+      position: absolute; inline-size: 1px; block-size: 1px;
+      overflow: hidden; clip-path: inset(50%);
+    }
   `;
   const panel = document.createElement('section');
   panel.setAttribute('aria-label', 'FOVILO Watch controls');

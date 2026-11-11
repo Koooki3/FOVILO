@@ -11,6 +11,12 @@ const watch = (id) => '/watch?v=' + id;
 const host = '[data-fovilo-watch]';
 const blockedWatch = watch(first) + '&clipboard=blocked';
 
+async function politeStatusNodes(cdp) {
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  return nodes.filter((node) => !node.ignored && node.role?.value === 'status' &&
+    node.properties?.some((property) => property.name === 'live' && property.value.value === 'polite'));
+}
+
 function audioFixture() {
   const samples = 32_000;
   const wav = Buffer.alloc(44 + samples * 2);
@@ -144,6 +150,9 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     const extensionId = await extension.getAttribute('id');
     assert.match(extensionId, /^[a-p]{32}$/);
     await manager.goto('chrome-extension://' + extensionId + '/popup.html');
+    const popupCdp = await context.newCDPSession(manager);
+    assert.equal((await politeStatusNodes(popupCdp)).length, 1);
+    await popupCdp.detach();
     const globalToggle = manager.getByRole('checkbox', { name: 'Enable FOVILO' });
     const watchToggle = manager.getByRole('checkbox', { name: 'Watch controls' });
     await globalToggle.waitFor();
@@ -181,12 +190,42 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await context.clearPermissions();
     await page.goto(origin + blockedWatch);
     await page.waitForFunction(() => document.querySelector('video').readyState > 0);
+    await page.setViewportSize({ width: 640, height: 800 });
+    const initialViewport = await page.evaluate(() => ({ width: innerWidth, scale: devicePixelRatio }));
+    await manager.goto('chrome-extension://' + extensionId + '/popup.html');
+    const zoom = await manager.evaluate(async () => {
+      const [watchTab] = await chrome.tabs.query({ index: 0, currentWindow: true });
+      await chrome.tabs.setZoom(watchTab.id, 2);
+      return chrome.tabs.getZoom(watchTab.id);
+    });
+    assert.equal(zoom, 2);
+    await page.bringToFront();
+    await page.waitForFunction(({ width, scale }) => innerWidth === width / 2 && devicePixelRatio === scale * 2, initialViewport);
+
+    const cdp = await context.newCDPSession(page);
+    const [liveRegion] = await politeStatusNodes(cdp);
+    assert.ok(liveRegion, 'the empty polite status region should exist before interaction');
+
     await page.getByRole('link', { name: 'Native action' }).focus();
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     await page.getByRole('status').getByText('Clipboard unavailable. Copy the link manually.').waitFor();
     const fallback = page.getByRole('textbox', { name: 'Time link for manual copying' });
     assert.equal(await fallback.inputValue(), origin + watch(first) + '&t=0s');
+    assert.ok((await politeStatusNodes(cdp)).some((node) => node.backendDOMNodeId === liveRegion.backendDOMNodeId));
+    assert.deepEqual(await page.locator(host).evaluate((host) => {
+      const panel = host.shadowRoot.querySelector('section');
+      const bounds = panel.getBoundingClientRect();
+      const fits = (element) => {
+        const child = element.getBoundingClientRect();
+        return child.width > 0 && child.left >= bounds.left && child.right <= bounds.right;
+      };
+      return {
+        panelFits: bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth,
+        noPanelOverflow: panel.scrollWidth === panel.clientWidth,
+        controlsFit: [...panel.querySelectorAll('button, input, [role=status]')].every(fits),
+      };
+    }), { panelFits: true, noPanelOverflow: true, controlsFit: true });
     assert.equal(await fallback.evaluate((input) =>
       input.getRootNode().activeElement === input && input.selectionStart === 0 &&
       input.selectionEnd === input.value.length), true);

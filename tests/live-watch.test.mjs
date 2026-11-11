@@ -39,7 +39,7 @@ async function withLivePage(run) {
 }
 
 test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000 }, (t) =>
-  withLivePage(async (page) => {
+  withLivePage(async (page, context) => {
     const host = page.locator('[data-fovilo-watch]');
     const search = page.locator('input[name="search_query"]').first();
     async function runSearch() {
@@ -85,11 +85,34 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     assert.equal(await host.count(), 1);
     t.diagnostic('The native player entered and exited fullscreen with one Watch control');
 
+    const initialViewport = await page.evaluate(() => ({ width: innerWidth, scale: devicePixelRatio }));
+    const manager = await context.newPage();
+    try {
+      await manager.goto('chrome://extensions/');
+      const extension = manager.locator('extensions-item').filter({ hasText: 'FOVILO (Development)' });
+      const extensionId = await extension.getAttribute('id');
+      assert.match(extensionId, /^[a-p]{32}$/);
+      await manager.goto('chrome-extension://' + extensionId + '/popup.html');
+      await manager.evaluate(async () => {
+        const [watchTab] = await chrome.tabs.query({ index: 0, currentWindow: true });
+        await chrome.tabs.setZoom(watchTab.id, 2);
+      });
+    } finally {
+      await manager.close();
+    }
+    await page.waitForFunction(({ width, scale }) => innerWidth === width / 2 && devicePixelRatio === scale * 2, initialViewport);
+
     await waitForPlayableVideo(page);
     const copy = page.getByRole('button', { name: 'Copy time link' });
     await copy.focus();
     await page.keyboard.press('Enter');
     await host.getByText('Time link copied.').waitFor();
+    assert.equal(await host.evaluate((element) => {
+      const panel = element.shadowRoot.querySelector('section');
+      const bounds = panel.getBoundingClientRect();
+      return bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth &&
+        panel.scrollWidth === panel.clientWidth;
+    }), true);
     assert.equal(await copy.evaluate((button) => button.getRootNode().activeElement === button), true);
     await page.keyboard.press('Tab');
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
@@ -97,7 +120,7 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     await host.waitFor({ state: 'detached' });
     const title = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #above-the-fold h1').first();
     assert.equal(await title.evaluate((heading) => document.activeElement === heading), true);
-    t.diagnostic('Default clipboard write worked by keyboard and Return to YouTube restored native focus');
+    t.diagnostic('At 200% tab zoom, default clipboard write worked by keyboard, the panel fit, and Return to YouTube restored native focus');
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #above-the-fold').waitFor({ state: 'attached' });
     await page.evaluate(() => {
