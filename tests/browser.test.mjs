@@ -68,9 +68,16 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.getByText('Time link copied.').waitFor();
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
     await page.locator('#movie_player').evaluate((el) => el.classList.add('ad-showing'));
+    await page.evaluate(() => { window.nativeVideo.currentTime = 1; });
     await page.getByRole('button', { name: 'Copy time link' }).click();
     await page.getByText('The video timestamp is unavailable.').waitFor();
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
     await page.locator('#movie_player').evaluate((el) => el.classList.remove('ad-showing'));
+    await page.evaluate(() => { window.nativeVideo.currentTime = 3; });
+    await page.getByRole('button', { name: 'Copy time link' }).click();
+    await page.getByText('Time link copied.').waitFor();
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=3s');
+    await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
 
     await page.evaluate((path) => history.pushState(null, '', path), watch(second));
     await page.locator(host).waitFor({ state: 'detached' });
@@ -84,7 +91,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.locator(host).count(), 1);
     await page.getByRole('button', { name: 'Copy time link' }).click();
     await page.getByText('The video timestamp is unavailable.').waitFor();
-    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=3s');
     await page.evaluate(() => history.back());
     await page.locator(host).waitFor({ state: 'detached' });
     await page.evaluate((id) => {
