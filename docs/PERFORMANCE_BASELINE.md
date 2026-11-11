@@ -2,9 +2,11 @@
 
 Run `npm run perf` for a fixed Watch fixture. The only response is a small synthetic HTML page served at the same origin and path as the real Watch page. Run `npm run perf -- --live` for the signed-out public YouTube video. Both use Playwright Chromium and the actual built MV3 package.
 
-Each run creates fresh profiles for native Chromium, FOVILO installed and disabled through its popup, and FOVILO enabled. It warms each profile with one navigation, then opens the same URL six times per state. State order rotates between rounds. Each sampled tab returns to `about:blank` before the next profile is sampled, stopping the previous page's playback and background work. The observer stops about 1.5 seconds after DOMContentLoaded. The test checks page visibility and expects one control only when FOVILO is on. A partial run is labeled incomplete.
+Each run creates fresh profiles for native Chromium, FOVILO installed and disabled through its popup, and FOVILO enabled. It warms each profile with one navigation, then opens the same URL six times per state by default. Use `--rounds=9` after the npm argument separator for nine rounds. State order rotates between rounds. Each sampled tab returns to `about:blank` before the next profile is sampled, stopping the previous page's playback and background work. Each navigation has checkpoints about 1.5 and 3.5 seconds after DOMContentLoaded. The test checks page visibility and expects one control only when FOVILO is on. A partial run is labeled incomplete.
 
-Raw samples, browser and OS versions, viewport and build hashes are written to `work/perf-fixture/samples.json` and `work/perf-live/samples.json`. The measurement includes navigation-to-DOMContentLoaded, the latest LCP candidate in the window, shifts without recent user input, long task counts and CDP renderer duration deltas after DOMContentLoaded. Treat the shift sum as a windowed diagnostic. Interpret task timings as combined renderer work and omit invalid deltas. The sample does not identify individual extension tasks.
+Raw samples, browser and OS versions, viewport and build hashes are written to `work/perf-fixture/samples.json` and `work/perf-live/samples.json`. Each checkpoint reports navigation-to-DOMContentLoaded, LCP candidate history with element type and page region where available, shifts without recent user input, and long task counts. CDP renderer duration deltas cover the longer post-DOMContentLoaded window. Treat the shift sum as a windowed diagnostic. Interpret task timings as combined renderer work and omit invalid deltas. The sample does not identify individual extension tasks. [Largest Contentful Paint specification](https://w3c.github.io/largest-contentful-paint/)
+
+Add `--trace` to capture one extra navigation per state after the timed samples. The resulting `trace-native.json`, `trace-off.json` and `trace-on.json` files can be opened in Chromium DevTools. The traced navigations are excluded from summary statistics. The raw trace files stay in the ignored local work directory. [Chrome DevTools Protocol Tracing](https://chromedevtools.github.io/devtools-protocol/tot/Tracing/)
 
 This baseline covers startup in headless Chromium. Longer interactions, final Core Web Vitals, INP, background behavior, real-device traces and high-refresh performance still need dedicated runs. Use the raw samples to check variation before interpreting differences between modes. The fixture only checks that instrumentation and extension states work under repeatable conditions.
 
@@ -22,4 +24,18 @@ The sequential live run yielded the following medians and observed ranges in mil
 | FOVILO off | 1,250 (1,107–2,021) | 1,572 (1,452–3,532) | 1,095 (1,053–1,290) |
 | FOVILO on | 1,219 (1,134–1,996) | 2,144 (1,428–3,424) | 1,097 (1,032–1,166) |
 
-The enabled median LCP candidate was 564 ms above native in this run. The ranges overlap and the measured renderer task medians were close. The startup performance gate stays open. Capture candidate identity and browser timeline traces in a larger repeat run before attributing the difference or setting a release claim.
+The enabled median LCP candidate was 564 ms above native in this run. The ranges overlap and the measured renderer task medians were close. The startup performance gate stays open. The raw samples for this first baseline were retained locally as `startup-baseline.json` in each report directory.
+
+## 2026-11-12 candidate and trace follow-up
+
+Ran `npm run perf -- --rounds=2 --trace` for the fixed fixture and `npm run perf -- --live --rounds=9 --trace` for the same signed-out YouTube video. Both runs completed. The fixture identified its native heading at both checkpoints in every sample. The live run recorded nine samples per state with the same browser and viewport as the first baseline.
+
+| State | LCP candidate at DCL + 1.5 s, median (range) | LCP candidate at DCL + 3.5 s, median (range) |
+| --- | ---: | ---: |
+| Native | 2,516 ms (1,528–2,604) | 2,556 ms (2,448–3,780) |
+| FOVILO off | 2,556 ms (1,456–2,624) | 2,560 ms (2,436–3,544) |
+| FOVILO on | 2,548 ms (1,360–2,768) | 2,624 ms (2,464–3,728) |
+
+All 27 live samples ended on a candidate associated with a `div` inside YouTube's player. None of the recorded candidate entries were associated with a FOVILO element. The candidate timestamp changed between checkpoints in seven samples, two native, two off and three on. At the short checkpoint, the enabled median was 32 ms above native, compared with 564 ms in the initial run. At the longer checkpoint, it was 68 ms above native. This follow-up did not reproduce the magnitude of the initial gap. The single-video headless runs cannot establish causality or final LCP.
+
+Each state produced a separate DevTools timeline with three LCP candidate events. The enabled trace contained 137 `EvaluateScript` or `FunctionCall` events whose source URL ended in FOVILO's `content.js`. Their recorded durations summed to 5.6 ms. This is a source-tagged event sum from one trace. It can include nested events and omits work without that source label. Use the local traces to investigate attribution, then measure interactions and additional videos before setting a release threshold.
