@@ -22,4 +22,6 @@ FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。首个播放页控
 
 测试浏览器能访问 YouTube 时，可单独运行 `npm run test:live`。该测试使用全新的无登录配置和 Blender 的公开视频。
 
+启动性能和时间链接反馈的测量方法见[性能基线](docs/PERFORMANCE_BASELINE.md)。
+
 FOVILO 是项目暂定名。本项目独立于 YouTube 和 Google。

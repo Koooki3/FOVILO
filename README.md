@@ -22,4 +22,6 @@ Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For t
 
 Run `npm run test:live` separately when the test browser can reach YouTube. It uses a fresh signed-out profile and a public Blender video.
 
+See the [performance baseline](docs/PERFORMANCE_BASELINE.md) for startup and time-link feedback measurements.
+
 FOVILO is a working name. This project is independent of YouTube and Google.

@@ -4,18 +4,24 @@ import { mkdir, mkdtemp, open, readFile, rm, writeFile } from 'node:fs/promises'
 import { cpus, platform, release } from 'node:os';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright-core';
+import { measureCopies } from './perf-interactions.mjs';
 
 const live = process.argv.includes('--live');
 const captureTraces = process.argv.includes('--trace');
+const captureInteractions = process.argv.includes('--interactions');
 const requestedRounds = process.argv.find((arg) => arg.startsWith('--rounds='));
-const videoId = 'aqz-KE-bpKQ';
+const defaultVideo = 'aqz-KE-bpKQ';
+const videoOption = process.argv.find((arg) => arg.startsWith('--video='));
+const videoId = videoOption ? videoOption.slice('--video='.length) : defaultVideo;
+assert.match(videoId, /^[\w-]{11}$/);
+assert.ok(live || !captureInteractions, '--interactions requires --live');
 const url = 'https://www.youtube.com/watch?v=' + videoId;
 const modes = ['native', 'off', 'on'];
 const rounds = requestedRounds ? Number(requestedRounds.slice('--rounds='.length)) : 6;
 assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 30, 'rounds must be an integer from 1 to 30');
 const checkpointsMs = [1500, 3500];
 const viewport = { width: 1280, height: 800 };
-const output = resolve('work', live ? 'perf-live' : 'perf-fixture');
+const output = resolve('work', live ? 'perf-live' : 'perf-fixture', videoOption ? videoId : '');
 const dist = resolve('dist');
 const counters = ['TaskDuration', 'ScriptDuration', 'LayoutDuration', 'RecalcStyleDuration'];
 
@@ -199,8 +205,9 @@ const report = {
   startedAt: new Date().toISOString(),
   url, viewport, checkpointsMs, rounds,
   host: { platform: platform(), release: release(), cpu: cpus()[0]?.model, node: process.version },
-  build, browsers: {}, samples,
+  build, browsers: {}, samples, copyFeedback: [],
 };
+const copyRepetitions = captureInteractions ? 12 : 0;
 const sessions = new Map();
 try {
   for (const mode of modes) {
@@ -218,6 +225,7 @@ try {
   if (captureTraces) {
     for (const mode of modes) await captureTrace(sessions.get(mode), mode);
   }
+  if (copyRepetitions) report.copyFeedback = await measureCopies(sessions.get('on'), url, copyRepetitions);
 } finally {
   for (const { context, profile } of sessions.values()) {
     await context.close();
@@ -226,7 +234,7 @@ try {
   const path = join(output, 'samples.json');
   await writeFile(path, JSON.stringify({
     ...report,
-    complete: samples.length === modes.length * rounds,
+    complete: samples.length === modes.length * rounds && report.copyFeedback.length === copyRepetitions,
   }, null, 2) + '\n');
   console.log(path + ' (' + samples.length + ' samples)');
 }
