@@ -41,6 +41,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     });
     await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
     await context.route('**/*', (route) => {
+      if (route.request().url().startsWith('chrome-extension://')) return route.continue();
       if (route.request().url() !== origin + '/') return route.abort();
       return route.fulfill({ contentType: 'text/html', body: `
         <!doctype html><title>YouTube fixture</title>
@@ -122,6 +123,36 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     })), { video: true, title: true, time: 2, comment: 'Keep this draft' });
     await page.evaluate(() => document.dispatchEvent(new Event('yt-navigate-finish', { bubbles: true })));
     assert.equal(await page.locator(host).count(), 0);
+
+    const manager = await context.newPage();
+    await manager.goto('chrome://extensions/');
+    const extension = manager.locator('extensions-item').filter({ hasText: 'FOVILO (Development)' });
+    await extension.waitFor({ state: 'attached' });
+    const extensionId = await extension.getAttribute('id');
+    assert.match(extensionId, /^[a-p]{32}$/);
+    await manager.goto('chrome-extension://' + extensionId + '/popup.html');
+    const globalToggle = manager.getByRole('checkbox', { name: 'Enable FOVILO' });
+    const watchToggle = manager.getByRole('checkbox', { name: 'Watch controls' });
+    await globalToggle.waitFor();
+    assert.equal(await globalToggle.isChecked(), false);
+    await globalToggle.check();
+    await page.locator(host).waitFor();
+    await watchToggle.uncheck();
+    await page.locator(host).waitFor({ state: 'detached' });
+    await watchToggle.check();
+    await page.locator(host).waitFor();
+    assert.equal(await page.locator(host).count(), 1);
+
+    await page.evaluate(async (path) => {
+      const root = document.querySelector('ytd-watch-flexy');
+      history.pushState(null, '', '/results?search_query=fixture');
+      root.remove();
+      history.pushState(null, '', path);
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      document.body.append(root);
+    }, watch(first));
+    await page.locator(host).waitFor();
+    assert.equal(await page.locator(host).count(), 1);
   } finally {
     await context?.close();
     await rm(profile, { recursive: true, force: true });

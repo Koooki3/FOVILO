@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint.mjs",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test tests/unit.test.mjs",
-    "test:browser": "npm run build && node --test tests/browser.test.mjs"
+    "test:browser": "npm run build && node --test tests/browser.test.mjs",
+    "test:live": "npm run build && node --test tests/live-watch.test.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",

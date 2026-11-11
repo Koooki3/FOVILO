@@ -20,4 +20,6 @@ The extension stores two preferences locally and runs its content script on `htt
 
 Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md) and [release material plan](docs/RELEASE_MATERIALS.md).
 
+Run `npm run test:live` separately when the test browser can reach YouTube. It uses a fresh signed-out profile and a public Blender video.
+
 FOVILO is a working name. This project is independent of YouTube and Google.
