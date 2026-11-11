@@ -4,6 +4,8 @@
 
 FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。首个播放页控件可以复制当前时间链接。点击 **Return to YouTube** 会移除控件并保存全局关闭状态。扩展弹窗可重新启用，也可单独关闭播放页控件。
 
+Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据的视觉层级，控件跟随 YouTube 的浅色或深色主题。
+
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)
 
 查看[启用与恢复对照](docs/RELEASE_MATERIALS.md#watch-development-preview)及录制环境。影片片段 © 2008 Blender Foundation，[CC BY 3.0](https://peach.blender.org/about/)。

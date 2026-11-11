@@ -4,6 +4,8 @@
 
 FOVILO is an experimental Chromium extension for desktop YouTube. The first Watch control copies a link to the current time. **Return to YouTube** removes the control and saves the global off setting. Use the extension popup to turn it back on or disable Watch controls separately.
 
+Everyday emphasizes the video title, channel and metadata in the native Watch layout. Its controls follow YouTube's light or dark appearance.
+
 ![Live YouTube recording showing time-link feedback and the restored page while playback continues](docs/media/watch-demo.gif)
 
 See the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development-preview) and the capture details. Film excerpt © 2008 Blender Foundation, [CC BY 3.0](https://peach.blender.org/about/).

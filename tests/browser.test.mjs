@@ -53,10 +53,15 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
       const headers = request === origin + blockedWatch ? { 'Permissions-Policy': 'clipboard-write=()' } : {};
       return route.fulfill({ contentType: 'text/html', headers, body: `
         <!doctype html><title>YouTube fixture</title>
+        <style>#title h1 { font-weight: 500; } #channel-name a { font-weight: 400; } #info { font-weight: 500; }</style>
         <ytd-watch-flexy video-id="${first}">
           <div id="movie_player"><video class="html5-main-video" controls
             src="${audioFixture()}"></video></div>
-          <div id="above-the-fold"><h1>Native title</h1><a href="#native">Native action</a></div>
+          <div id="above-the-fold">
+            <div id="title"><h1>Native title</h1></div>
+            <div id="owner"><div id="channel-name"><a href="#native">Native action</a></div></div>
+            <div id="description-inner"><div id="info">Views and date</div></div>
+          </div>
           <textarea aria-label="Native comment"></textarea>
         </ytd-watch-flexy>` });
     });
@@ -64,12 +69,23 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     const page = context.pages()[0];
     await page.goto(origin + '/');
     assert.equal(await page.locator(host).count(), 0);
+    const hierarchy = () => page.evaluate(() =>
+      ['#title h1', '#channel-name a', '#info'].map((selector) =>
+        getComputedStyle(document.querySelector(selector)).fontWeight));
+    assert.deepEqual(await hierarchy(), ['500', '400', '500']);
     await page.evaluate((path) => {
       window.nativeVideo = document.querySelector('video');
       window.nativeTitle = document.querySelector('h1');
       history.pushState(null, '', path);
     }, watch(first));
     await page.locator(host).waitFor();
+    assert.deepEqual(await hierarchy(), ['700', '600', '400']);
+    const readScheme = () => page.locator(host).evaluate((element) => getComputedStyle(element).colorScheme);
+    assert.equal(await readScheme(), 'light');
+    await page.evaluate(() => document.documentElement.setAttribute('dark', ''));
+    assert.equal(await readScheme(), 'dark');
+    await page.evaluate(() => document.documentElement.removeAttribute('dark'));
+    assert.equal(await readScheme(), 'light');
     await page.waitForFunction(() => window.nativeVideo.readyState > 0);
     await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
     await page.getByRole('link', { name: 'Native action' }).focus();
@@ -234,6 +250,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.keyboard.press('Enter');
     await page.locator(host).waitFor({ state: 'detached' });
     const title = page.getByRole('heading', { name: 'Native title' });
+    assert.deepEqual(await hierarchy(), ['500', '400', '500']);
     assert.equal(await title.evaluate((heading) => heading === document.activeElement), true);
     await page.keyboard.press('Tab');
     assert.equal(await page.getByRole('link', { name: 'Native action' }).evaluate((link) =>

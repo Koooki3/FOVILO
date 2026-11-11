@@ -72,6 +72,13 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     await host.waitFor();
     t.diagnostic('Watch → Search → Back → Forward → Back preserved the mount boundary');
 
+    assert.deepEqual(await host.evaluate((element) => {
+      const anchor = element.parentElement;
+      return ['#title h1', '#owner #channel-name a', '#description-inner #info'].map((selector) =>
+        getComputedStyle(anchor.querySelector(selector)).fontWeight);
+    }), ['700', '600', '400']);
+    t.diagnostic('Everyday hierarchy applied to the native title, channel and metadata');
+
     const fullscreen = page.locator('#movie_player .ytp-fullscreen-button');
     await page.locator('#movie_player').hover();
     await fullscreen.click();

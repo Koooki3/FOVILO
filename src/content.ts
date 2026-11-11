@@ -1,5 +1,6 @@
 import { observeSettings, writeSetting } from './settings.ts';
 import { timeLink, watchId } from './watch.ts';
+import { everydayWatchStyles } from './watch-style.ts';
 
 const ownedSelector = '[data-fovilo-watch]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
@@ -68,6 +69,9 @@ function mount(id: string, anchor: Element): Mounted {
   const { signal } = scope;
   const host = document.createElement('div');
   host.dataset.foviloWatch = '';
+  const everyday = document.createElement('style');
+  everyday.textContent = everydayWatchStyles;
+  host.append(everyday);
   const shadow = host.attachShadow({ mode: 'open' });
   const styles = document.createElement('style');
   styles.textContent = `
