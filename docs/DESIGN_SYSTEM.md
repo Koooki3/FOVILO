@@ -7,3 +7,7 @@ Validate visible focus, narrow layouts, long translations and zoom before adopti
 ## Everyday on Watch
 
 The title leads with a responsive 20–24 px size and a 700 weight. The channel label uses 600 and the views/date row uses 400. All three stay in the original YouTube layout and keep the site's text colors. The controls follow the appearance selected on YouTube. The stylesheet is attached to the Watch host so disabling the enhancement removes the typography changes with the controls.
+
+## Focus on Watch
+
+Focus is a video-scoped toggle for regular Watch pages with the expected recommendations container. It hides the recommendations subtree through the owned stylesheet and leaves the player, comments, and sibling sections in their native layout. The button retains its name and exposes its pressed state. Feedback uses a separate row so its appearance leaves the controls in place. Video changes and playlist routes reset the toggle. The layout stays static during the switch.

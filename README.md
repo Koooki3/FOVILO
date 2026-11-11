@@ -6,6 +6,8 @@ FOVILO is an experimental Chromium extension for desktop YouTube. The first Watc
 
 Everyday emphasizes the video title, channel and metadata in the native Watch layout. Its controls follow YouTube's light or dark appearance.
 
+Choose **Focus** on a supported video to hide the recommendations beside it. Choose **Focus** again to restore them. Focus resets when the video changes. The control is available on regular Watch pages with a supported recommendations area.
+
 ![Live YouTube recording showing time-link feedback and the restored page while playback continues](docs/media/watch-demo.gif)
 
 See the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development-preview) and the capture details. Film excerpt © 2008 Blender Foundation, [CC BY 3.0](https://peach.blender.org/about/).

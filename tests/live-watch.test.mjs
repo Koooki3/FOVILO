@@ -79,6 +79,26 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     }), ['700', '600', '400']);
     t.diagnostic('Everyday hierarchy applied to the native title, channel and metadata');
 
+    const focus = host.getByRole('button', { name: 'Focus', exact: true });
+    const recommendations = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #secondary-inner > #related');
+    const media = page.locator('#movie_player video.html5-main-video');
+    await recommendations.waitFor();
+    await waitForPlayableVideo(page);
+    const original = await media.elementHandle();
+    const playback = await media.evaluate((video) => ({ paused: video.paused, time: video.currentTime }));
+    await focus.focus();
+    await page.keyboard.press('Space');
+    await recommendations.waitFor({ state: 'hidden' });
+    assert.equal(await focus.getAttribute('aria-pressed'), 'true');
+    assert.equal(await page.locator('#comments').first().count(), 1);
+    assert.equal(await media.evaluate((video, state) =>
+      video === state.original && video.paused === state.playback.paused &&
+      video.currentTime >= state.playback.time, { original, playback }), true);
+    await page.keyboard.press('Space');
+    await recommendations.waitFor();
+    assert.equal(await focus.getAttribute('aria-pressed'), 'false');
+    t.diagnostic('Focus toggled native recommendations without replacing the video or changing playback state');
+
     const fullscreen = page.locator('#movie_player .ytp-fullscreen-button');
     await page.locator('#movie_player').hover();
     await fullscreen.click();
@@ -122,6 +142,10 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     }), true);
     assert.equal(await copy.evaluate((button) => button.getRootNode().activeElement === button), true);
     await page.keyboard.press('Tab');
+    if (await focus.isVisible()) {
+      assert.equal(await focus.evaluate((button) => button.getRootNode().activeElement === button), true);
+      await page.keyboard.press('Tab');
+    }
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
     await page.keyboard.press('Enter');
     await host.waitFor({ state: 'detached' });
@@ -170,6 +194,7 @@ test('playlist handoffs and native captions preserve Watch controls', { timeout:
     assert.equal(response?.status(), 200);
     await host.waitFor();
     await assertTimeLink(videoId, 4);
+    assert.equal(await host.getByRole('button', { name: 'Focus', exact: true }).count(), 0);
 
     const episode = page.locator('ytd-playlist-panel-video-renderer a[href*="/watch?v=' + sintel + '"]').first();
     await episode.click();

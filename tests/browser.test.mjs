@@ -63,6 +63,10 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
             <div id="description-inner"><div id="info">Views and date</div></div>
           </div>
           <textarea aria-label="Native comment"></textarea>
+          <div id="secondary-inner">
+            <div id="playlist">Native playlist panel</div>
+            <div id="related"><a href="#next">Native recommendation</a></div>
+          </div>
         </ytd-watch-flexy>` });
     });
 
@@ -107,8 +111,34 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=3s');
     await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
 
+    const focus = page.getByRole('button', { name: 'Focus', exact: true });
+    const recommendations = page.locator('#secondary-inner > #related');
+    const nativePlaylist = page.locator('#playlist');
+    await focus.focus();
+    await page.keyboard.press('Space');
+    await recommendations.waitFor({ state: 'hidden' });
+    assert.equal(await focus.getAttribute('aria-pressed'), 'true');
+    assert.equal(await nativePlaylist.isVisible(), true);
+    assert.equal(await page.evaluate(() =>
+      document.querySelector('video') === window.nativeVideo && window.nativeVideo.currentTime === 2), true);
+    await page.keyboard.press('Space');
+    await recommendations.waitFor();
+    assert.equal(await focus.getAttribute('aria-pressed'), 'false');
+    await focus.click();
+    await recommendations.waitFor({ state: 'hidden' });
+
+    await page.evaluate((path) => history.pushState(null, '', path), watch(first) + '&list=fixture');
+    await recommendations.waitFor();
+    assert.equal(await focus.count(), 0);
+    await page.evaluate(() => history.back());
+    await focus.waitFor();
+    assert.equal(await focus.getAttribute('aria-pressed'), 'false');
+    await focus.click();
+    await recommendations.waitFor({ state: 'hidden' });
+
     await page.evaluate((path) => history.pushState(null, '', path), watch(second));
     await page.locator(host).waitFor({ state: 'detached' });
+    await recommendations.waitFor();
     await page.evaluate((id) => {
       document.querySelector('ytd-watch-flexy').setAttribute('video-id', id);
       for (let index = 0; index < 20; index += 1) {
@@ -117,6 +147,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     }, second);
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+    assert.equal(await focus.getAttribute('aria-pressed'), 'false');
     await page.getByRole('button', { name: 'Copy time link' }).click();
     await page.getByText('The video timestamp is unavailable.').waitFor();
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=3s');
@@ -148,8 +179,11 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.locator(host).count(), 1);
 
     await page.getByRole('textbox', { name: 'Native comment' }).fill('Keep this draft');
+    await focus.click();
+    await recommendations.waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'Return to YouTube' }).click();
     await page.locator(host).waitFor({ state: 'detached' });
+    await recommendations.waitFor();
     assert.deepEqual(await page.evaluate(() => ({
       video: document.querySelector('video') === window.nativeVideo,
       title: document.querySelector('h1') === window.nativeTitle,
