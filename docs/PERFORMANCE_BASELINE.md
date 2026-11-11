@@ -10,6 +10,8 @@ Add `--trace` to capture one extra navigation per state after the timed samples.
 
 Use `--video=<id>` to measure another public Watch page and store its report under the corresponding video ID subdirectory. On live runs, `--interactions` adds 12 trusted Playwright clicks on **Copy time link** after startup sampling. It checks the success message and compares the clipboard link to the media time read during that click. The test browser grants clipboard access for this run. Each sample records elapsed time from the click event to the status mutation and to the second animation-frame callback after that mutation. The second value approximates a paint opportunity. This test measures repeated clicks on a single mounted page and requests a pause before clicking.
 
+Use `npm run perf -- --live --rounds=0 --video=<id> --interactions --trace` for a focused follow-up. It writes under the video's `interactions/` directory so the startup report is preserved. It records one batch without tracing and another with tracing, both in the same isolated profile on separate page loads. The `trace-copy.json` timeline marks input, event dispatch, status mutation, and both frame callbacks for each traced click. The JSON report also lists long tasks overlapping each measured interval. Dispatch-to-status includes clipboard work, scheduling and DOM mutation delivery. It cannot isolate clipboard service time on its own.
+
 This baseline covers startup and one Watch interaction in headless Chromium. Final Core Web Vitals, INP, keyboard and mobile interaction latency, background behavior, real-device traces and high-refresh performance still need dedicated runs. Use the raw samples to check variation before interpreting differences between modes. The fixture only checks that instrumentation and extension states work under repeatable conditions.
 
 ## 2026-11-12 first baseline
@@ -52,3 +54,16 @@ Ran `npm run perf -- --live --rounds=3 --video=<id> --interactions` for `aqz-KE-
 | Sintel | 532 / 688 / 436 ms | 11.8 ms (7.5–156.2) | 23.4 ms (15.7–259.5) |
 
 In these samples, the latest LCP candidate was a player-region `div` for *Big Buck Bunny* and a `div` outside the tracked player and metadata regions for *Sintel*. There were three startup observations per state and 12 clicks on one page instance per video. The test browser had clipboard access pre-granted. One *Sintel* click took 156.2 ms to update the status and 259.5 ms to reach the second frame callback. A dedicated interaction trace is needed to distinguish input scheduling, clipboard completion and frame scheduling. Treat the frame timing as an approximation and keep the interaction performance gate open.
+
+## 2026-11-12 copy interaction traces
+
+Ran the focused command on both videos. All 48 clicks passed clipboard verification, split into 12 untraced and 12 traced clicks per video. Each trace contains all 60 expected phase marks. Local reports and traces are in `work/perf-live/<id>/interactions/`.
+
+| Video | Click to second frame callback, untraced median / maximum | Traced median / maximum |
+| --- | ---: | ---: |
+| Big Buck Bunny | 18.6 / 179.6 ms | 16.8 / 30.1 ms |
+| Sintel | 22.1 / 275.7 ms | 22.1 / 190.3 ms |
+
+The slowest traced *Sintel* click took 71.5 ms to dispatch, another 54.7 ms to update status, 28.9 ms to the first frame callback and 35.2 ms to the second. Long Tasks reported 63 ms and 50 ms tasks overlapping the interaction. In that trace interval, the renderer main thread had YouTube-tagged function calls inside animation-frame callbacks. The longest YouTube-tagged function call was 27.4 ms. The longest extension-tagged function call was 1.0 ms. These are source-tagged events in one interval and can be nested.
+
+The slow tail recurred without tracing on both videos. Scheduling delays are present before and after dispatch. The trace did not expose a distinct clipboard service event, so it cannot attribute the entire dispatch-to-status interval. The untraced and traced sets are separate observations. Keep the interaction gate open for additional devices, ordinary clipboard permissions and input modalities.

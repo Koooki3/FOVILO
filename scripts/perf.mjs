@@ -18,10 +18,12 @@ assert.ok(live || !captureInteractions, '--interactions requires --live');
 const url = 'https://www.youtube.com/watch?v=' + videoId;
 const modes = ['native', 'off', 'on'];
 const rounds = requestedRounds ? Number(requestedRounds.slice('--rounds='.length)) : 6;
-assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 30, 'rounds must be an integer from 1 to 30');
+assert.ok(Number.isInteger(rounds) && rounds >= 0 && rounds <= 30, 'rounds must be an integer from 0 to 30');
+assert.ok(rounds > 0 || captureInteractions, '--rounds=0 requires --interactions');
 const checkpointsMs = [1500, 3500];
 const viewport = { width: 1280, height: 800 };
-const output = resolve('work', live ? 'perf-live' : 'perf-fixture', videoOption ? videoId : '');
+const output = resolve('work', live ? 'perf-live' : 'perf-fixture',
+  videoOption ? videoId : '', rounds === 0 ? 'interactions' : '');
 const dist = resolve('dist');
 const counters = ['TaskDuration', 'ScriptDuration', 'LayoutDuration', 'RecalcStyleDuration'];
 
@@ -165,20 +167,20 @@ async function measure({ page, cdp }, mode) {
   return { checkpoints, hostCount, rendererMs };
 }
 
-async function captureTrace(session, mode) {
+async function captureTrace(session, name, run, extraCategories = '') {
   const { cdp } = session;
   await cdp.send('Tracing.start', {
-    categories: 'devtools.timeline,loading,blink.user_timing',
+    categories: 'devtools.timeline,loading,blink.user_timing' + extraCategories,
     transferMode: 'ReturnAsStream',
   });
   const finished = new Promise((resolve) => cdp.once('Tracing.tracingComplete', resolve));
   try {
-    await measure(session, mode);
+    return await run();
   } finally {
     await cdp.send('Tracing.end');
     const { stream } = await finished;
     assert.ok(stream);
-    const file = await open(join(output, 'trace-' + mode + '.json'), 'w');
+    const file = await open(join(output, 'trace-' + name + '.json'), 'w');
     try {
       let chunk;
       do {
@@ -205,16 +207,16 @@ const report = {
   startedAt: new Date().toISOString(),
   url, viewport, checkpointsMs, rounds,
   host: { platform: platform(), release: release(), cpu: cpus()[0]?.model, node: process.version },
-  build, browsers: {}, samples, copyFeedback: [],
+  build, browsers: {}, samples, copyFeedback: [], tracedCopyFeedback: [],
 };
 const copyRepetitions = captureInteractions ? 12 : 0;
 const sessions = new Map();
 try {
-  for (const mode of modes) {
+  for (const mode of rounds === 0 ? ['on'] : modes) {
     const session = await launch(mode);
     sessions.set(mode, session);
     report.browsers[mode] = session.browserVersion;
-    await measure(session, mode);
+    if (rounds > 0) await measure(session, mode);
   }
   for (let round = 0; round < rounds; round += 1) {
     for (let offset = 0; offset < modes.length; offset += 1) {
@@ -222,10 +224,21 @@ try {
       samples.push({ round: round + 1, mode, ...await measure(sessions.get(mode), mode) });
     }
   }
-  if (captureTraces) {
-    for (const mode of modes) await captureTrace(sessions.get(mode), mode);
+  if (captureTraces && rounds > 0) {
+    for (const mode of modes) {
+      const session = sessions.get(mode);
+      await captureTrace(session, mode, () => measure(session, mode));
+    }
   }
-  if (copyRepetitions) report.copyFeedback = await measureCopies(sessions.get('on'), url, copyRepetitions);
+  if (copyRepetitions) {
+    const session = sessions.get('on');
+    report.copyFeedback = await measureCopies(session, url, copyRepetitions);
+    if (captureTraces) {
+      report.tracedCopyFeedback = await captureTrace(
+        session, 'copy', () => measureCopies(session, url, copyRepetitions, true), ',input,latencyInfo',
+      );
+    }
+  }
 } finally {
   for (const { context, profile } of sessions.values()) {
     await context.close();
@@ -234,7 +247,10 @@ try {
   const path = join(output, 'samples.json');
   await writeFile(path, JSON.stringify({
     ...report,
-    complete: samples.length === modes.length * rounds && report.copyFeedback.length === copyRepetitions,
+    complete: samples.length === modes.length * rounds &&
+      report.copyFeedback.length === copyRepetitions &&
+      report.tracedCopyFeedback.length === (captureTraces ? copyRepetitions : 0),
   }, null, 2) + '\n');
-  console.log(path + ' (' + samples.length + ' samples)');
+  console.log(path + ' (' + samples.length + ' startup samples, ' +
+    report.copyFeedback.length + ' untraced and ' + report.tracedCopyFeedback.length + ' traced clicks)');
 }
