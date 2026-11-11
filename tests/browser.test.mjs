@@ -9,6 +9,7 @@ const first = 'abcdefghijk';
 const second = 'zyxwvutsrqp';
 const watch = (id) => '/watch?v=' + id;
 const host = '[data-fovilo-watch]';
+const blockedWatch = watch(first) + '&clipboard=blocked';
 
 function audioFixture() {
   const samples = 32_000;
@@ -39,16 +40,17 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
       channel: 'chromium',
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
     });
-    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
     await context.route('**/*', (route) => {
       if (route.request().url().startsWith('chrome-extension://')) return route.continue();
-      if (![origin + '/', origin + watch(first)].includes(route.request().url())) return route.abort();
-      return route.fulfill({ contentType: 'text/html', body: `
+      const request = route.request().url();
+      if (![origin + '/', origin + watch(first), origin + blockedWatch].includes(request)) return route.abort();
+      const headers = request === origin + blockedWatch ? { 'Permissions-Policy': 'clipboard-write=()' } : {};
+      return route.fulfill({ contentType: 'text/html', headers, body: `
         <!doctype html><title>YouTube fixture</title>
         <ytd-watch-flexy video-id="${first}">
           <div id="movie_player"><video class="html5-main-video" controls
             src="${audioFixture()}"></video></div>
-          <div id="above-the-fold"><h1>Native title</h1></div>
+          <div id="above-the-fold"><h1>Native title</h1><a href="#native">Native action</a></div>
           <textarea aria-label="Native comment"></textarea>
         </ytd-watch-flexy>` });
     });
@@ -64,8 +66,12 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.locator(host).waitFor();
     await page.waitForFunction(() => window.nativeVideo.readyState > 0);
     await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
-    await page.getByRole('button', { name: 'Copy time link' }).click();
+    await page.getByRole('link', { name: 'Native action' }).focus();
+    await page.keyboard.press('Tab');
+    await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Copy time link');
+    await page.keyboard.press('Space');
     await page.getByText('Time link copied.').waitFor();
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
     await page.locator('#movie_player').evaluate((el) => el.classList.add('ad-showing'));
     await page.evaluate(() => { window.nativeVideo.currentTime = 1; });
@@ -171,6 +177,29 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.reload();
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+
+    await context.clearPermissions();
+    await page.goto(origin + blockedWatch);
+    await page.waitForFunction(() => document.querySelector('video').readyState > 0);
+    await page.getByRole('link', { name: 'Native action' }).focus();
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Enter');
+    await page.getByRole('status').getByText('Clipboard unavailable. Copy the link manually.').waitFor();
+    const fallback = page.getByRole('textbox', { name: 'Time link for manual copying' });
+    assert.equal(await fallback.inputValue(), origin + watch(first) + '&t=0s');
+    assert.equal(await fallback.evaluate((input) =>
+      input.getRootNode().activeElement === input && input.selectionStart === 0 &&
+      input.selectionEnd === input.value.length), true);
+    await page.keyboard.press('Shift+Tab');
+    await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
+    await page.keyboard.press('Enter');
+    await page.locator(host).waitFor({ state: 'detached' });
+    const title = page.getByRole('heading', { name: 'Native title' });
+    assert.equal(await title.evaluate((heading) => heading === document.activeElement), true);
+    await page.keyboard.press('Tab');
+    assert.equal(await page.getByRole('link', { name: 'Native action' }).evaluate((link) =>
+      link === document.activeElement), true);
+    assert.equal(await title.getAttribute('tabindex'), null);
   } finally {
     await context?.close();
     await rm(profile, { recursive: true, force: true });

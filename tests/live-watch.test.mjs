@@ -8,6 +8,15 @@ const origin = 'https://www.youtube.com';
 const videoId = 'aqz-KE-bpKQ';
 const query = 'Big Buck Bunny 60fps 4K Blender aqz-KE-bpKQ';
 
+function waitForPlayableVideo(page) {
+  return page.waitForFunction(() => {
+    const player = document.querySelector('#movie_player');
+    const video = player?.querySelector('video.html5-main-video');
+    return video?.readyState >= 2 && Number.isFinite(video.duration) &&
+      !player.matches('.ad-showing, .ad-interrupting');
+  });
+}
+
 async function withLivePage(run) {
   await mkdir('work', { recursive: true });
   const profile = await mkdtemp(join(resolve('work'), 'live-'));
@@ -76,8 +85,19 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     assert.equal(await host.count(), 1);
     t.diagnostic('The native player entered and exited fullscreen with one Watch control');
 
-    await page.getByRole('button', { name: 'Return to YouTube' }).click();
+    await waitForPlayableVideo(page);
+    const copy = page.getByRole('button', { name: 'Copy time link' });
+    await copy.focus();
+    await page.keyboard.press('Enter');
+    await host.getByText('Time link copied.').waitFor();
+    assert.equal(await copy.evaluate((button) => button.getRootNode().activeElement === button), true);
+    await page.keyboard.press('Tab');
+    await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
+    await page.keyboard.press('Enter');
     await host.waitFor({ state: 'detached' });
+    const title = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #above-the-fold h1').first();
+    assert.equal(await title.evaluate((heading) => document.activeElement === heading), true);
+    t.diagnostic('Default clipboard write worked by keyboard and Return to YouTube restored native focus');
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #above-the-fold').waitFor({ state: 'attached' });
     await page.evaluate(() => {
@@ -99,12 +119,7 @@ test('playlist handoffs and native captions preserve Watch controls', { timeout:
     const media = player.locator('video.html5-main-video');
 
     async function assertTimeLink(id, seconds) {
-      await page.waitForFunction(() => {
-        const player = document.querySelector('#movie_player');
-        const video = player?.querySelector('video.html5-main-video');
-        return video?.readyState >= 2 && Number.isFinite(video.duration) &&
-          !player.matches('.ad-showing, .ad-interrupting');
-      });
+      await waitForPlayableVideo(page);
       await media.evaluate((video, time) => {
         video.pause();
         video.currentTime = time;

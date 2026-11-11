@@ -16,6 +16,8 @@ FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。首个播放页控
 
 扩展只在本地保存两项设置，内容脚本运行于 `https://www.youtube.com/*`。复制链接由用户主动触发。构建产物无遥测或扩展后端服务。
 
+浏览器拒绝访问剪贴板时，FOVILO 会显示可选中的链接。关闭播放页控件时，如果键盘焦点仍在 FOVILO 内，焦点会回到 YouTube 原生视频标题。
+
 ## 开发
 
 运行 `npm run typecheck`、`npm run lint`（Manifest 策略检查）和 `npm test`。浏览器夹具测试需先运行 `npx playwright-core install chromium --no-shell`，再运行 `npm run test:browser`。参见[验证矩阵](docs/QA_MATRIX.md)和[宣发物料计划](docs/RELEASE_MATERIALS.md)。

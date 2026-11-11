@@ -16,6 +16,8 @@ See the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development
 
 The extension stores two preferences locally and runs its content script on `https://www.youtube.com/*`. Copying requires a user action. The build has no telemetry or extension service.
 
+If the browser blocks clipboard access, FOVILO shows the link in a selectable field. On the Watch page, **Return to YouTube** returns keyboard focus to the native video title when focus is still on the FOVILO controls.
+
 ## Development
 
 Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md) and [release material plan](docs/RELEASE_MATERIALS.md).

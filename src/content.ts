@@ -90,6 +90,7 @@ function mount(id: string, anchor: Element): Mounted {
   time.textContent = 'Copy time link';
   const restore = document.createElement('button');
   restore.textContent = 'Return to YouTube';
+  let returning = false;
   const status = document.createElement('span');
   status.setAttribute('role', 'status');
   const link = document.createElement('input');
@@ -124,7 +125,7 @@ function mount(id: string, anchor: Element): Mounted {
       link.value = url;
       link.hidden = false;
       status.textContent = 'Clipboard unavailable. Copy the link manually.';
-      if (shadow.activeElement === time || !shadow.activeElement) {
+      if (shadow.activeElement === time) {
         link.focus();
         link.select();
       }
@@ -134,21 +135,45 @@ function mount(id: string, anchor: Element): Mounted {
   }, { signal });
 
   restore.addEventListener('click', async (event) => {
-    if (!event.isTrusted || !current()) return;
-    restore.disabled = true;
+    if (!event.isTrusted || returning || !current()) return;
+    returning = true;
+    restore.setAttribute('aria-disabled', 'true');
     try {
       await writeSetting('enabled', false);
     } catch {
+      returning = false;
+      restore.removeAttribute('aria-disabled');
       if (current()) status.textContent = 'Could not save the setting. Try again.';
-    } finally {
-      restore.disabled = false;
     }
   }, { signal });
 
   panel.append(label, time, restore, status, link);
   shadow.append(styles, panel);
   anchor.append(host);
-  return { id, anchor, host, dispose: () => { scope.abort(); host.remove(); } };
+  return {
+    id,
+    anchor,
+    host,
+    dispose() {
+      if (returning && document.activeElement === host && current()) {
+        const target = anchor.querySelector('h1') ?? anchor;
+        if (target instanceof HTMLElement) {
+          const hadTabIndex = target.hasAttribute('tabindex');
+          if (!hadTabIndex) target.tabIndex = -1;
+          target.focus({ preventScroll: true });
+          if (!hadTabIndex) {
+            const cleanup = () => {
+              if (target.getAttribute('tabindex') === '-1') target.removeAttribute('tabindex');
+            };
+            if (document.activeElement === target) target.addEventListener('blur', cleanup, { once: true });
+            else cleanup();
+          }
+        }
+      }
+      scope.abort();
+      host.remove();
+    },
+  };
 }
 
 function reconcile(allowRetry: boolean) {
