@@ -1,0 +1,6 @@
+html { color-scheme: light dark; }
+body { min-inline-size: 230px; padding: 14px; font: 15px system-ui; }
+h1 { margin: 0 0 16px; font-size: 19px; }
+label { display: flex; align-items: center; gap: 8px; min-block-size: 36px; }
+input:focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+[role=status]:empty { display: none; }
