@@ -35,7 +35,7 @@ export function mountSearch(anchor: Element) {
   density.addEventListener('click', (event) => {
     if (event.isTrusted) toggleDensity();
   }, { signal });
-  const openCommands = addCommands([{ label: 'Toggle compact results', run: toggleDensity }]);
+  const openCommands = addCommands([{ id: 'search.toggle-compact', label: 'Toggle compact results', run: toggleDensity }]);
 
   anchor.prepend(host);
   return { anchor, host, openCommands, dispose };

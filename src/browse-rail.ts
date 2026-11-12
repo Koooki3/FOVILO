@@ -65,8 +65,8 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
     const name = surface === 'home' ? 'Home' : 'Search';
     const palette = createCommands(shadow, [
       ...commands,
-      { label: 'Toggle ' + name + ' controls', run: toggleRail },
-      { label: 'Return to YouTube', run: restoreYouTube },
+      { id: surface + '.toggle-controls', label: 'Toggle ' + name + ' controls', run: toggleRail },
+      { id: 'return-native', label: 'Return to YouTube', run: restoreYouTube, remember: false },
     ], signal);
     restore.before(palette.trigger);
     return () => { if (current()) palette.open(true); };

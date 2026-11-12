@@ -98,6 +98,10 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
 
     await runSearch();
     assert.equal(await density.getAttribute('aria-pressed'), 'true');
+    await searchRail.getByRole('button', { name: 'Commands', exact: true }).click();
+    assert.deepEqual(await searchRail.getByRole('list', { name: 'Recent commands' })
+      .getByRole('button').allTextContents(), ['Toggle compact results']);
+    await page.keyboard.press('Escape');
     await density.click();
     assert.equal(await density.getAttribute('aria-pressed'), 'false');
     assert.equal(await spacing(), nativeSpacing);
@@ -196,10 +200,15 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
       return bounds.left >= 0 && bounds.right <= innerWidth &&
         bounds.top >= 0 && bounds.bottom <= innerHeight;
     }), true);
+    await page.keyboard.press('Enter');
+    await dialog.waitFor({ state: 'hidden' });
+    await commands.click();
+    assert.deepEqual(await dialog.getByRole('list', { name: 'Recent commands' })
+      .getByRole('button').allTextContents(), ['Copy time link']);
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden' });
     assert.equal(await commands.evaluate((button) => button.getRootNode().activeElement === button), true);
-    t.diagnostic('Watch Commands fit at 200% zoom and Escape restored the launcher focus');
+    t.diagnostic('Watch Commands fit at 200% zoom, promoted the selected command and restored launcher focus');
     await page.keyboard.press('Tab');
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
     await page.keyboard.press('Enter');

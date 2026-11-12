@@ -1,8 +1,19 @@
 export type Command = {
+  id: string;
   label: string;
   run: () => void;
   available?: () => boolean;
+  remember?: false;
 };
+
+const recentIds: string[] = [];
+
+function remember(id: string) {
+  const oldIndex = recentIds.indexOf(id);
+  if (oldIndex !== -1) recentIds.splice(oldIndex, 1);
+  recentIds.unshift(id);
+  if (recentIds.length > 6) recentIds.pop();
+}
 
 export function createCommands(shadow: ShadowRoot, commands: Command[], signal: AbortSignal) {
   const styles = document.createElement('style');
@@ -18,9 +29,11 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
     .command-heading h2 { margin: 0; font-size: 1.2em; }
     dialog label { display: grid; gap: 6px; margin-block: 12px; }
     dialog ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
-    dialog li[hidden] { display: none; }
+    dialog [hidden] { display: none; }
     dialog li button { inline-size: 100%; text-align: start; }
     dialog p { margin-block-end: 0; }
+    .recent-commands { margin-block-end: 12px; }
+    .recent-commands h3 { margin: 0 0 6px; font-size: 0.92em; }
   `;
   const trigger = document.createElement('button');
   trigger.textContent = 'Commands';
@@ -40,6 +53,14 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   const search = document.createElement('input');
   search.type = 'search';
   label.append(search);
+  const recent = document.createElement('div');
+  recent.className = 'recent-commands';
+  const recentHeading = document.createElement('h3');
+  recentHeading.id = 'fovilo-recent-commands';
+  recentHeading.textContent = 'Recent commands';
+  const recentResults = document.createElement('ul');
+  recentResults.setAttribute('aria-labelledby', recentHeading.id);
+  recent.append(recentHeading, recentResults);
   const results = document.createElement('ul');
   const empty = document.createElement('p');
   empty.setAttribute('role', 'status');
@@ -54,6 +75,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
 
   function execute(command: Command) {
     if (!dialog.open || command.available?.() === false) return;
+    if (command.remember !== false) remember(command.id);
     close();
     command.run();
   }
@@ -66,17 +88,20 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
       if (event.isTrusted) execute(command);
     }, { signal });
     row.append(button);
-    results.append(row);
     return { command, row, button };
   });
+  const rowsById = new Map(rows.map((entry) => [entry.command.id, entry]));
+  let orderedRows = rows;
 
   function filter() {
     const words = search.value.trim().toLowerCase().split(/\s+/);
-    for (const { command, row } of rows) {
+    for (const { command, row } of orderedRows) {
       row.hidden = command.available?.() === false ||
         !words.every((word) => command.label.toLowerCase().includes(word));
     }
-    empty.textContent = rows.every(({ row }) => row.hidden) ? 'No matching commands.' : '';
+    recent.hidden = !recentResults.querySelector('li:not([hidden])');
+    results.hidden = !results.querySelector('li:not([hidden])');
+    empty.textContent = recent.hidden && results.hidden ? 'No matching commands.' : '';
   }
 
   function open(fromShortcut = false) {
@@ -84,6 +109,11 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
     const previous = document.activeElement === shadow.host ? shadow.activeElement : document.activeElement;
     returnFocus = fromShortcut && previous instanceof HTMLElement && previous !== document.body ? previous : trigger;
     search.value = '';
+    const recentRows = recentIds.flatMap((id) => rowsById.get(id) ?? []);
+    const otherRows = rows.filter(({ command }) => !recentIds.includes(command.id));
+    recentResults.replaceChildren(...recentRows.map(({ row }) => row));
+    results.replaceChildren(...otherRows.map(({ row }) => row));
+    orderedRows = [...recentRows, ...otherRows];
     filter();
     dialog.showModal();
     search.focus();
@@ -102,7 +132,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
       close();
       return;
     }
-    const visible = rows.filter(({ row }) => !row.hidden);
+    const visible = orderedRows.filter(({ row }) => !row.hidden);
     if (!visible.length) return;
     if (event.key === 'Enter' && event.target === search) {
       event.preventDefault();
@@ -120,7 +150,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   signal.addEventListener('abort', () => {
     if (dialog.open) dialog.close();
   }, { once: true });
-  dialog.append(heading, label, results, empty);
+  dialog.append(heading, label, recent, results, empty);
   shadow.append(styles, dialog);
   return { trigger, open };
 }

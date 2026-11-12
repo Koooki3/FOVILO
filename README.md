@@ -18,6 +18,8 @@ On Home, **Subscriptions** opens YouTube's native subscriptions page from the co
 
 Select **Commands** on Home, Search or Watch to find actions for that page. Use the arrow keys to move through matches, Enter to run a command and Esc to close the dialog and restore focus.
 
+**Recent commands** lists commands you selected that are still available on the current page. The list clears when you reload YouTube or close the tab.
+
 To assign your own shortcut, open the FOVILO popup, choose **Keyboard shortcuts**, and set **Open FOVILO Commands** in the browser's extension shortcuts page. The shortcut starts unassigned. It leaves focused text fields and native fullscreen alone.
 
 ![Live YouTube recording showing time-link feedback and the restored page while playback continues](docs/media/watch-demo.gif)

@@ -18,6 +18,8 @@ Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据�
 
 在首页、搜索页或播放页打开 **Commands**，即可查找适用于当前页面的操作。方向键选择，Enter 执行，Esc 退出并恢复焦点。
 
+**Recent commands** 会列出最近选过、且在当前页面可用的命令。刷新 YouTube 或关闭标签页后，列表会清空。
+
 如需自定义快捷键，可在 FOVILO 弹窗点 **Keyboard shortcuts**，然后在浏览器的扩展快捷键页设置 **Open FOVILO Commands**。安装后默认未绑定按键，输入框聚焦或原生全屏时不会打开面板。
 
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)

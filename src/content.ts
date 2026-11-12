@@ -212,6 +212,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
 
   const commands = createCommands(shadow, [
     {
+      id: 'watch.copy-time-link',
       label: 'Copy time link',
       run() {
         if (!railExpanded) toggleRail();
@@ -220,12 +221,13 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
       },
     },
     ...modes.map((mode) => ({
+      id: 'watch.toggle-' + mode.name,
       label: 'Toggle ' + mode.label,
       run: () => toggleMode(mode),
       available: () => supportsMode(mode),
     })),
-    { label: 'Toggle Watch controls', run: toggleRail },
-    { label: 'Return to YouTube', run: restoreYouTube },
+    { id: 'watch.toggle-controls', label: 'Toggle Watch controls', run: toggleRail },
+    { id: 'return-native', label: 'Return to YouTube', run: restoreYouTube, remember: false },
   ], signal);
   restore.before(commands.trigger);
 
