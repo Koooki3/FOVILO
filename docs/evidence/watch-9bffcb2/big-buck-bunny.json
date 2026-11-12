@@ -1,0 +1,1571 @@
+{
+  "scenario": "signed-out live Watch navigation",
+  "startedAt": "2026-11-12T10:52:26.044Z",
+  "url": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "checkpointsMs": [
+    1500,
+    3500
+  ],
+  "rounds": 6,
+  "host": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX",
+    "node": "v24.13.1"
+  },
+  "build": {
+    "manifest.json": {
+      "bytes": 716,
+      "sha256": "586d16ed85b94a1b5be15c64f85df212130f22e0cc4d3afe6118af1487120628"
+    },
+    "content.js": {
+      "bytes": 38570,
+      "sha256": "9d8361828e3cb3b9e8f908cf65f271f24897bcd48cb90e2da7325b3a3b49ba05"
+    }
+  },
+  "browsers": {
+    "native": "Chrome/145.0.7632.6",
+    "off": "Chrome/145.0.7632.6",
+    "on": "Chrome/145.0.7632.6"
+  },
+  "samples": [
+    {
+      "round": 1,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1577.0999999977648,
+          "observedUntilMs": 3116,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1836,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2924,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2924,
+          "cumulativeShift": 0.00786648015975952,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1577.0999999977648,
+          "observedUntilMs": 5093.89999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1836,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2924,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2924,
+          "cumulativeShift": 0.00830556707382202,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1798.6149999999998,
+        "ScriptDuration": 1053.224,
+        "LayoutDuration": 114.04599999999998,
+        "RecalcStyleDuration": 115.82800000000002
+      }
+    },
+    {
+      "round": 1,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1472.699999999255,
+          "observedUntilMs": 3015.599999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 692,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1732,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2816,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2816,
+          "cumulativeShift": 0.009819254398345946,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1472.699999999255,
+          "observedUntilMs": 4986.599999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 692,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1732,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2816,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2816,
+          "cumulativeShift": 0.010258341312408445,
+          "longTasks": 10
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1775.462,
+        "ScriptDuration": 991.296,
+        "LayoutDuration": 131.84199999999998,
+        "RecalcStyleDuration": 115.813
+      }
+    },
+    {
+      "round": 1,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1001.3999999985099,
+          "observedUntilMs": 2607.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1580,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2364,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2364,
+          "cumulativeShift": 0.006241786003112794,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1001.3999999985099,
+          "observedUntilMs": 4517.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1580,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2364,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2364,
+          "cumulativeShift": 0.006241786003112794,
+          "longTasks": 6
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1666.036,
+        "ScriptDuration": 958.845,
+        "LayoutDuration": 113.36299999999999,
+        "RecalcStyleDuration": 127.01400000000001
+      }
+    },
+    {
+      "round": 2,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1309.5,
+          "observedUntilMs": 2831.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 940,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1556,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2580,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2580,
+          "cumulativeShift": 0.009807019662857054,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1309.5,
+          "observedUntilMs": 4814.60000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 940,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1556,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2580,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2580,
+          "cumulativeShift": 0.010246106576919553,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1705.768,
+        "ScriptDuration": 930.4159999999999,
+        "LayoutDuration": 128.805,
+        "RecalcStyleDuration": 101.997
+      }
+    },
+    {
+      "round": 2,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 845.3999999985099,
+          "observedUntilMs": 2403.699999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 668,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1196,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2160,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2160,
+          "cumulativeShift": 0.006241938591003419,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 845.3999999985099,
+          "observedUntilMs": 4354.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 668,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1196,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2160,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2160,
+          "cumulativeShift": 0.006241938591003419,
+          "longTasks": 6
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1214.292,
+        "ScriptDuration": 631.415,
+        "LayoutDuration": 91.866,
+        "RecalcStyleDuration": 116.4
+      }
+    },
+    {
+      "round": 2,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1177.4000000022352,
+          "observedUntilMs": 2706.900000002235,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 832,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1452,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2416,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2416,
+          "cumulativeShift": 0.006805238151550293,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1177.4000000022352,
+          "observedUntilMs": 4686.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 832,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1452,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2416,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2416,
+          "cumulativeShift": 0.007244325065612793,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1781.645,
+        "ScriptDuration": 1036.975,
+        "LayoutDuration": 115.833,
+        "RecalcStyleDuration": 119.479
+      }
+    },
+    {
+      "round": 3,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 873.8999999985099,
+          "observedUntilMs": 2412.7999999970198,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 700,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1228,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2208,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2208,
+          "cumulativeShift": 0.006241297721862793,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 873.8999999985099,
+          "observedUntilMs": 4383.89999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 700,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1228,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2208,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2208,
+          "cumulativeShift": 0.006241297721862793,
+          "longTasks": 5
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1232.373,
+        "ScriptDuration": 650.98,
+        "LayoutDuration": 93.174,
+        "RecalcStyleDuration": 119.82200000000002
+      }
+    },
+    {
+      "round": 3,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1409.5,
+          "observedUntilMs": 2940.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 1044,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1668,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2640,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2640,
+          "cumulativeShift": 0.006802491569519044,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1409.5,
+          "observedUntilMs": 4923.099999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 1044,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1668,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2640,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2640,
+          "cumulativeShift": 0.007241578483581544,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1677.597,
+        "ScriptDuration": 941.749,
+        "LayoutDuration": 103.38300000000001,
+        "RecalcStyleDuration": 109.941
+      }
+    },
+    {
+      "round": 3,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1117.199999999255,
+          "observedUntilMs": 2649.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 744,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1376,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2376,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2376,
+          "cumulativeShift": 0.009810145330429076,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1117.199999999255,
+          "observedUntilMs": 4623.599999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 744,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1376,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2376,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2376,
+          "cumulativeShift": 0.010249232244491575,
+          "longTasks": 9
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1646.165,
+        "ScriptDuration": 922.7970000000001,
+        "LayoutDuration": 131.75,
+        "RecalcStyleDuration": 105.012
+      }
+    },
+    {
+      "round": 4,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1268.300000000745,
+          "observedUntilMs": 2798.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 904,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1532,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2488,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2488,
+          "cumulativeShift": 0.006803254508972167,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1268.300000000745,
+          "observedUntilMs": 4785.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 904,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1532,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2488,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2488,
+          "cumulativeShift": 0.007242341423034667,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1795.487,
+        "ScriptDuration": 1005.3400000000001,
+        "LayoutDuration": 111.639,
+        "RecalcStyleDuration": 119.171
+      }
+    },
+    {
+      "round": 4,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1317.8999999985099,
+          "observedUntilMs": 2835.699999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 956,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1564,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2568,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2568,
+          "cumulativeShift": 0.006772767448425292,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1317.8999999985099,
+          "observedUntilMs": 4834.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 956,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1564,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2568,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2568,
+          "cumulativeShift": 0.007211854362487793,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1766.144,
+        "ScriptDuration": 969.7339999999999,
+        "LayoutDuration": 139.69299999999998,
+        "RecalcStyleDuration": 109.741
+      }
+    },
+    {
+      "round": 4,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1049.0999999977648,
+          "observedUntilMs": 2590.599999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 880,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1384,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2372,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2372,
+          "cumulativeShift": 0.006241297721862793,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1049.0999999977648,
+          "observedUntilMs": 4553.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 880,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1384,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2372,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2372,
+          "cumulativeShift": 0.006241297721862793,
+          "longTasks": 6
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1230.8059999999998,
+        "ScriptDuration": 647.725,
+        "LayoutDuration": 90.25,
+        "RecalcStyleDuration": 116.83300000000001
+      }
+    },
+    {
+      "round": 5,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1007.1999999992549,
+          "observedUntilMs": 2520.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 644,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1248,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2224,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2224,
+          "cumulativeShift": 0.006772004508972168,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1007.1999999992549,
+          "observedUntilMs": 4514.79999999702,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 644,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1248,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2224,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2224,
+          "cumulativeShift": 0.007211091423034668,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1680.675,
+        "ScriptDuration": 953.757,
+        "LayoutDuration": 107.46799999999999,
+        "RecalcStyleDuration": 116.56400000000001
+      }
+    },
+    {
+      "round": 5,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 982.9000000022352,
+          "observedUntilMs": 2591.60000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 804,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1308,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2372,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2372,
+          "cumulativeShift": 0.006241755485534668,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 982.9000000022352,
+          "observedUntilMs": 4491.400000002235,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 804,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1308,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2372,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2372,
+          "cumulativeShift": 0.006241755485534668,
+          "longTasks": 6
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1324.0420000000001,
+        "ScriptDuration": 680.288,
+        "LayoutDuration": 113.211,
+        "RecalcStyleDuration": 121.886
+      }
+    },
+    {
+      "round": 5,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 993.5999999977648,
+          "observedUntilMs": 2508.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 636,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1248,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2240,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2240,
+          "cumulativeShift": 0.006806489372253417,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 993.5999999977648,
+          "observedUntilMs": 4497.89999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 636,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1248,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2240,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2240,
+          "cumulativeShift": 0.007245576286315917,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1721.398,
+        "ScriptDuration": 948.353,
+        "LayoutDuration": 109.462,
+        "RecalcStyleDuration": 134.56900000000002
+      }
+    },
+    {
+      "round": 6,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 971.4000000022352,
+          "observedUntilMs": 2497.800000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 912,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1344,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2296,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2296,
+          "cumulativeShift": 0.006240809440612794,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 971.4000000022352,
+          "observedUntilMs": 4482.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 912,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1344,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2296,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2296,
+          "cumulativeShift": 0.006240809440612794,
+          "longTasks": 5
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1189.562,
+        "ScriptDuration": 641.827,
+        "LayoutDuration": 79.824,
+        "RecalcStyleDuration": 116.03500000000001
+      }
+    },
+    {
+      "round": 6,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1183.7999999970198,
+          "observedUntilMs": 2698.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 824,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1448,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2436,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2436,
+          "cumulativeShift": 0.006802949333190918,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1183.7999999970198,
+          "observedUntilMs": 4698.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 824,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1448,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2436,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2436,
+          "cumulativeShift": 0.007242036247253419,
+          "longTasks": 10
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1700.4039999999998,
+        "ScriptDuration": 972.9709999999999,
+        "LayoutDuration": 118.562,
+        "RecalcStyleDuration": 111.682
+      }
+    },
+    {
+      "round": 6,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1085.5,
+          "observedUntilMs": 2597.400000002235,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1364,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2328,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2328,
+          "cumulativeShift": 0.006769563102722168,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1085.5,
+          "observedUntilMs": 4601.900000002235,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            },
+            {
+              "ms": 1364,
+              "size": 387610,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            },
+            {
+              "ms": 2328,
+              "size": 435600,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 2328,
+          "cumulativeShift": 0.007208650016784668,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1688.649,
+        "ScriptDuration": 942.3410000000001,
+        "LayoutDuration": 115.247,
+        "RecalcStyleDuration": 116.88099999999999
+      }
+    }
+  ],
+  "copyFeedback": [
+    {
+      "repetition": 1,
+      "inputToDispatchMs": 8.699999999254942,
+      "dispatchToStatusMs": 2.600000001490116,
+      "statusToFirstFrameMs": 0.19999999925494194,
+      "firstToSecondFrameMs": 13.199999999254942,
+      "mutationMs": 11.300000000745058,
+      "nextFrameMs": 24.699999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 2,
+      "inputToDispatchMs": 5.399999998509884,
+      "dispatchToStatusMs": 2.800000000745058,
+      "statusToFirstFrameMs": 1,
+      "firstToSecondFrameMs": 7.300000000745058,
+      "mutationMs": 8.199999999254942,
+      "nextFrameMs": 16.5,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 3,
+      "inputToDispatchMs": 3.100000001490116,
+      "dispatchToStatusMs": 1.2999999970197678,
+      "statusToFirstFrameMs": 4.300000000745058,
+      "firstToSecondFrameMs": 7.400000002235174,
+      "mutationMs": 4.399999998509884,
+      "nextFrameMs": 16.100000001490116,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 4,
+      "inputToDispatchMs": 3.5,
+      "dispatchToStatusMs": 1.199999999254942,
+      "statusToFirstFrameMs": 7.800000000745058,
+      "firstToSecondFrameMs": 5,
+      "mutationMs": 4.699999999254942,
+      "nextFrameMs": 17.5,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 5,
+      "inputToDispatchMs": 2.599999997764826,
+      "dispatchToStatusMs": 1.2000000029802322,
+      "statusToFirstFrameMs": 6.599999997764826,
+      "firstToSecondFrameMs": 7.5,
+      "mutationMs": 3.800000000745058,
+      "nextFrameMs": 17.899999998509884,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 6,
+      "inputToDispatchMs": 2.600000001490116,
+      "dispatchToStatusMs": 1.3999999985098839,
+      "statusToFirstFrameMs": 6.800000000745058,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 4,
+      "nextFrameMs": 18,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 7,
+      "inputToDispatchMs": 2.199999999254942,
+      "dispatchToStatusMs": 2.600000001490116,
+      "statusToFirstFrameMs": 6.599999997764826,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 4.800000000745058,
+      "nextFrameMs": 18.599999997764826,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 8,
+      "inputToDispatchMs": 2.800000000745058,
+      "dispatchToStatusMs": 1.5,
+      "statusToFirstFrameMs": 6.5,
+      "firstToSecondFrameMs": 7.399999998509884,
+      "mutationMs": 4.300000000745058,
+      "nextFrameMs": 18.199999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 9,
+      "inputToDispatchMs": 2.800000000745058,
+      "dispatchToStatusMs": 1.5,
+      "statusToFirstFrameMs": 6.699999999254942,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 4.300000000745058,
+      "nextFrameMs": 18.199999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 10,
+      "inputToDispatchMs": 2.099999997764826,
+      "dispatchToStatusMs": 2.300000000745058,
+      "statusToFirstFrameMs": 6.5,
+      "firstToSecondFrameMs": 7.300000000745058,
+      "mutationMs": 4.399999998509884,
+      "nextFrameMs": 18.199999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 11,
+      "inputToDispatchMs": 2.699999999254942,
+      "dispatchToStatusMs": 1.5,
+      "statusToFirstFrameMs": 6.5,
+      "firstToSecondFrameMs": 7.400000002235174,
+      "mutationMs": 4.199999999254942,
+      "nextFrameMs": 18.100000001490116,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 12,
+      "inputToDispatchMs": 2.300000000745058,
+      "dispatchToStatusMs": 1.5,
+      "statusToFirstFrameMs": 6.600000001490116,
+      "firstToSecondFrameMs": 7.299999997019768,
+      "mutationMs": 3.800000000745058,
+      "nextFrameMs": 17.699999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    }
+  ],
+  "tracedCopyFeedback": [],
+  "complete": true
+}

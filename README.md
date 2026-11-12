@@ -26,7 +26,7 @@ To assign your own shortcut, open the FOVILO popup, choose **Keyboard shortcuts*
 
 ![Live YouTube recording showing time-link feedback and the restored page while playback continues](docs/media/watch-demo.gif)
 
-See the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development-preview) and the capture details. Film excerpt © 2008 Blender Foundation, [CC BY 3.0](https://peach.blender.org/about/).
+Watch the [18-second live walkthrough](docs/media/watch-walkthrough.mp4) or see the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development-preview) and capture details. Film excerpt © 2008 Blender Foundation. [CC BY 3.0](https://peach.blender.org/about/)
 
 ## Try the development build
 
@@ -40,10 +40,10 @@ If the browser blocks clipboard access, FOVILO shows the link in a selectable fi
 
 ## Development
 
-Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md) [release material plan](docs/RELEASE_MATERIALS.md), [release runbook](docs/RELEASE_RUNBOOK.md), and [privacy notice](PRIVACY.md).
+Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md), [release material plan](docs/RELEASE_MATERIALS.md), [release runbook](docs/RELEASE_RUNBOOK.md), and [privacy notice](PRIVACY.md).
 
 Run `npm run test:live` separately when the test browser can reach YouTube. It uses a fresh signed-out profile and a public Blender video.
 
-See the [performance baseline](docs/PERFORMANCE_BASELINE.md) for startup and time-link feedback measurements.
+See the [live Watch performance chart and sample data](docs/PERFORMANCE_BASELINE.md#development-build-preview) for startup and time-link feedback measurements.
 
 FOVILO is a working name. This project is independent of YouTube and Google.

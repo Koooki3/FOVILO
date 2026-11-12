@@ -24,7 +24,7 @@ FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。点击 **恢复原
 
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)
 
-查看[启用与恢复对照](docs/RELEASE_MATERIALS.md#watch-development-preview)及录制环境。影片片段 © 2008 Blender Foundation，[CC BY 3.0](https://peach.blender.org/about/)。
+观看 [18 秒实机演示](docs/media/watch-walkthrough.mp4)，或查看[启用与恢复对照](docs/RELEASE_MATERIALS.md#watch-development-preview)及录制环境。影片片段 © 2008 Blender Foundation。[CC BY 3.0](https://peach.blender.org/about/)
 
 ## 试用开发版
 
@@ -42,6 +42,6 @@ FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。点击 **恢复原
 
 测试浏览器能访问 YouTube 时，可单独运行 `npm run test:live`。该测试使用全新的无登录配置和 Blender 的公开视频。
 
-启动性能和时间链接反馈的测量方法见[性能基线](docs/PERFORMANCE_BASELINE.md)。
+启动性能和时间链接反馈的实机数据见 [Watch 性能图和原始样本](docs/PERFORMANCE_BASELINE.md#development-build-preview)。
 
 FOVILO 是项目暂定名。本项目独立于 YouTube 和 Google。

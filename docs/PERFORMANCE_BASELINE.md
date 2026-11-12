@@ -67,3 +67,22 @@ Ran the focused command on both videos. All 48 clicks passed clipboard verificat
 The slowest traced *Sintel* click took 71.5 ms to dispatch, another 54.7 ms to update status, 28.9 ms to the first frame callback and 35.2 ms to the second. Long Tasks reported 63 ms and 50 ms tasks overlapping the interaction. In that trace interval, the renderer main thread had YouTube-tagged function calls inside animation-frame callbacks. The longest YouTube-tagged function call was 27.4 ms. The longest extension-tagged function call was 1.0 ms. These are source-tagged events in one interval and can be nested.
 
 The slow tail recurred without tracing on both videos. Scheduling delays are present before and after dispatch. The trace did not expose a distinct clipboard service event, so it cannot attribute the entire dispatch-to-status interval. The untraced and traced sets are separate observations. Keep the interaction gate open for additional devices, ordinary clipboard permissions and input modalities.
+
+## Development build preview
+
+![Dot plots for 36 startup navigations and 24 copy trials. Median startup candidates move in opposite directions across the two videos, and one Sintel copy reaches the second frame callback at 110 ms.](media/watch-performance.png)
+
+These runs used commit `9bffcb2` on Windows with an Intel Core i7-13650HX and headless Chrome for Testing 145.0.7632.6 at 1280 × 800. Each signed-out video had six navigations per state and 12 untraced clicks in one enabled page with clipboard access granted. The reports record the environment, manifest and content script hashes, both startup checkpoints and every click. [Big Buck Bunny samples](evidence/watch-9bffcb2/big-buck-bunny.json) · [Sintel samples](evidence/watch-9bffcb2/sintel.json)
+
+| Video | Startup candidate median, native / off / on | Click to status, median / maximum | Click to second frame, median / maximum |
+| --- | ---: | ---: | ---: |
+| Big Buck Bunny | 2,462 / 2,472 / 2,330 ms | 4.4 / 11.3 ms | 18.1 / 24.7 ms |
+| Sintel | 696 / 694 / 756 ms | 4.5 / 20.6 ms | 17.7 / 110.2 ms |
+
+With FOVILO enabled, the candidate median was 132 ms earlier than native on *Big Buck Bunny* and 60 ms later on *Sintel*. These are windowed observations from two URLs on one machine. The second frame callback approximates a paint opportunity. The performance gate remains open for additional devices, ordinary clipboard permissions and keyboard interactions.
+
+To regenerate the figure from the retained reports with Python and Matplotlib 3.11.0, run this from the repository root.
+
+```sh
+python scripts/plot_watch_performance.py docs/evidence/watch-9bffcb2/big-buck-bunny.json docs/evidence/watch-9bffcb2/sintel.json docs/media/watch-performance.png
+```

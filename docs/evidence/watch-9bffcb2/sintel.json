@@ -1,0 +1,1100 @@
+{
+  "scenario": "signed-out live Watch navigation",
+  "startedAt": "2026-11-12T10:54:14.137Z",
+  "url": "https://www.youtube.com/watch?v=eRsGyueVLvQ",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "checkpointsMs": [
+    1500,
+    3500
+  ],
+  "rounds": 6,
+  "host": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX",
+    "node": "v24.13.1"
+  },
+  "build": {
+    "manifest.json": {
+      "bytes": 716,
+      "sha256": "586d16ed85b94a1b5be15c64f85df212130f22e0cc4d3afe6118af1487120628"
+    },
+    "content.js": {
+      "bytes": 38570,
+      "sha256": "9d8361828e3cb3b9e8f908cf65f271f24897bcd48cb90e2da7325b3a3b49ba05"
+    }
+  },
+  "browsers": {
+    "native": "Chrome/145.0.7632.6",
+    "off": "Chrome/145.0.7632.6",
+    "on": "Chrome/145.0.7632.6"
+  },
+  "samples": [
+    {
+      "round": 1,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 991.6000000014901,
+          "observedUntilMs": 2591.60000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 708,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 708,
+          "cumulativeShift": 0.035198524665832516,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 991.6000000014901,
+          "observedUntilMs": 4501.5,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 708,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 708,
+          "cumulativeShift": 0.04441934986114501,
+          "longTasks": 9
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 2385.735,
+        "ScriptDuration": 1579.8799999999999,
+        "LayoutDuration": 72.41199999999999,
+        "RecalcStyleDuration": 128.025
+      }
+    },
+    {
+      "round": 1,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1554.3999999985099,
+          "observedUntilMs": 3161.5,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 628,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 628,
+          "cumulativeShift": 0.0352102128982544,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1554.3999999985099,
+          "observedUntilMs": 5057.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 628,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 628,
+          "cumulativeShift": 0.044431038093566896,
+          "longTasks": 13
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1902.2450000000001,
+        "ScriptDuration": 1103.001,
+        "LayoutDuration": 108.259,
+        "RecalcStyleDuration": 122.29200000000002
+      }
+    },
+    {
+      "round": 1,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1545,
+          "observedUntilMs": 3132.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 700,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 700,
+          "cumulativeShift": 0.03521006031036376,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1545,
+          "observedUntilMs": 5058.60000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 700,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 700,
+          "cumulativeShift": 0.04004001636505126,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 2044.136,
+        "ScriptDuration": 1126.366,
+        "LayoutDuration": 105.56099999999999,
+        "RecalcStyleDuration": 255.376
+      }
+    },
+    {
+      "round": 2,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1082,
+          "observedUntilMs": 2633.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 712,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 712,
+          "cumulativeShift": 0.03521076221466064,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1082,
+          "observedUntilMs": 4600.10000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 712,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 712,
+          "cumulativeShift": 0.04443158740997315,
+          "longTasks": 7
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1763.3310000000001,
+        "ScriptDuration": 1011.741,
+        "LayoutDuration": 99.967,
+        "RecalcStyleDuration": 115.29599999999998
+      }
+    },
+    {
+      "round": 2,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1150.800000000745,
+          "observedUntilMs": 2698,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 804,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 804,
+          "cumulativeShift": 0.03521067066192626,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1150.800000000745,
+          "observedUntilMs": 4661.5,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 804,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 804,
+          "cumulativeShift": 0.040040626716613764,
+          "longTasks": 12
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1809.6999999999998,
+        "ScriptDuration": 994.4599999999999,
+        "LayoutDuration": 89.769,
+        "RecalcStyleDuration": 222.236
+      }
+    },
+    {
+      "round": 2,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 874.0999999977648,
+          "observedUntilMs": 2434,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 684,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 684,
+          "cumulativeShift": 0.03519162769317626,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 874.0999999977648,
+          "observedUntilMs": 4389,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 684,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 684,
+          "cumulativeShift": 0.04441245288848876,
+          "longTasks": 7
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1826.177,
+        "ScriptDuration": 1125.3229999999999,
+        "LayoutDuration": 59.181,
+        "RecalcStyleDuration": 129.948
+      }
+    },
+    {
+      "round": 3,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1137.0999999977648,
+          "observedUntilMs": 2715.7999999970198,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 780,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 780,
+          "cumulativeShift": 0.03520862598419189,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1137.0999999977648,
+          "observedUntilMs": 4648.099999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 780,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 780,
+          "cumulativeShift": 0.04003858203887939,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1838.297,
+        "ScriptDuration": 1016.173,
+        "LayoutDuration": 97.33200000000001,
+        "RecalcStyleDuration": 217.068
+      }
+    },
+    {
+      "round": 3,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 875,
+          "observedUntilMs": 2449.89999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 676,
+          "cumulativeShift": 0.03519007129669189,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 875,
+          "observedUntilMs": 4392.5,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 676,
+          "cumulativeShift": 0.04441089649200439,
+          "longTasks": 7
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1766.991,
+        "ScriptDuration": 1095.233,
+        "LayoutDuration": 88.579,
+        "RecalcStyleDuration": 116.09
+      }
+    },
+    {
+      "round": 3,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1031.699999999255,
+          "observedUntilMs": 2544.89999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 676,
+          "cumulativeShift": 0.03521228809356689,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1031.699999999255,
+          "observedUntilMs": 4534.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 676,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 676,
+          "cumulativeShift": 0.04443311328887939,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1720.0449999999998,
+        "ScriptDuration": 1009.131,
+        "LayoutDuration": 77.234,
+        "RecalcStyleDuration": 115.52199999999999
+      }
+    },
+    {
+      "round": 4,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 841,
+          "observedUntilMs": 2381.7999999970198,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 772,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1160,
+              "size": 172800,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 1160,
+          "cumulativeShift": 0.03519116992950439,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 841,
+          "observedUntilMs": 4353.699999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 772,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1160,
+              "size": 172800,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 1160,
+          "cumulativeShift": 0.04441199512481689,
+          "longTasks": 7
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1790.1520000000003,
+        "ScriptDuration": 1122.2869999999998,
+        "LayoutDuration": 58.038000000000004,
+        "RecalcStyleDuration": 125.08999999999997
+      }
+    },
+    {
+      "round": 4,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1132.5,
+          "observedUntilMs": 2661.10000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 756,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 756,
+          "cumulativeShift": 0.03521421070098876,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1132.5,
+          "observedUntilMs": 4636.900000002235,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 756,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 756,
+          "cumulativeShift": 0.04443503589630127,
+          "longTasks": 8
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1746.678,
+        "ScriptDuration": 1013.6940000000001,
+        "LayoutDuration": 96.323,
+        "RecalcStyleDuration": 113.205
+      }
+    },
+    {
+      "round": 4,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 949,
+          "observedUntilMs": 2489.300000000745,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 584,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 584,
+          "cumulativeShift": 0.03521067066192626,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 949,
+          "observedUntilMs": 4464.70000000298,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 584,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 584,
+          "cumulativeShift": 0.040040626716613764,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1782.4170000000001,
+        "ScriptDuration": 968.716,
+        "LayoutDuration": 99.274,
+        "RecalcStyleDuration": 214.78
+      }
+    },
+    {
+      "round": 5,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1185.7999999970198,
+          "observedUntilMs": 2741.599999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 808,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 808,
+          "cumulativeShift": 0.03520804615020751,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1185.7999999970198,
+          "observedUntilMs": 4693.5,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 808,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 808,
+          "cumulativeShift": 0.04442887134552001,
+          "longTasks": 10
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 2121.672,
+        "ScriptDuration": 1302.561,
+        "LayoutDuration": 143.783,
+        "RecalcStyleDuration": 124.90100000000001
+      }
+    },
+    {
+      "round": 5,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1151.300000000745,
+          "observedUntilMs": 2704.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 732,
+          "cumulativeShift": 0.0352061845779419,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1151.300000000745,
+          "observedUntilMs": 4654.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 732,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 732,
+          "cumulativeShift": 0.0400361406326294,
+          "longTasks": 13
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1855.719,
+        "ScriptDuration": 1045.0520000000001,
+        "LayoutDuration": 95.91999999999999,
+        "RecalcStyleDuration": 209.808
+      }
+    },
+    {
+      "round": 5,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 767.5,
+          "observedUntilMs": 2305.60000000149,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 584,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 584,
+          "cumulativeShift": 0.035188118171691894,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 767.5,
+          "observedUntilMs": 4284,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 584,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 584,
+          "cumulativeShift": 0.04440894336700439,
+          "longTasks": 8
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1744.533,
+        "ScriptDuration": 1087.074,
+        "LayoutDuration": 57.304,
+        "RecalcStyleDuration": 113.532
+      }
+    },
+    {
+      "round": 6,
+      "mode": "on",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1246.300000000745,
+          "observedUntilMs": 2801.199999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 812,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 812,
+          "cumulativeShift": 0.03520951099395751,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1246.300000000745,
+          "observedUntilMs": 4758,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 812,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 812,
+          "cumulativeShift": 0.040039467048645014,
+          "longTasks": 10
+        }
+      ],
+      "hostCount": 1,
+      "rendererMs": {
+        "TaskDuration": 1820.3050000000003,
+        "ScriptDuration": 1003.039,
+        "LayoutDuration": 91.913,
+        "RecalcStyleDuration": 219.844
+      }
+    },
+    {
+      "round": 6,
+      "mode": "native",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 911.2999999970198,
+          "observedUntilMs": 2440.39999999851,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 848,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1244,
+              "size": 172800,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 1244,
+          "cumulativeShift": 0.03519113941192627,
+          "longTasks": 5
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 911.2999999970198,
+          "observedUntilMs": 4420,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 848,
+              "size": 1394,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": false
+            },
+            {
+              "ms": 1244,
+              "size": 172800,
+              "tag": "div",
+              "scope": "player",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 1244,
+          "cumulativeShift": 0.04441196460723877,
+          "longTasks": 6
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1770.8359999999998,
+        "ScriptDuration": 1106.297,
+        "LayoutDuration": 58.974,
+        "RecalcStyleDuration": 119.982
+      }
+    },
+    {
+      "round": 6,
+      "mode": "off",
+      "checkpoints": [
+        {
+          "delayAfterDclMs": 1500,
+          "dclMs": 1025.0999999977648,
+          "observedUntilMs": 2571.099999997765,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 652,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 652,
+          "cumulativeShift": 0.035210487556457525,
+          "longTasks": 6
+        },
+        {
+          "delayAfterDclMs": 3500,
+          "dclMs": 1025.0999999977648,
+          "observedUntilMs": 4541.699999999255,
+          "visibility": "visible",
+          "candidates": [
+            {
+              "ms": 652,
+              "size": 172800,
+              "tag": "div",
+              "scope": "other",
+              "hasResource": true
+            }
+          ],
+          "lcpMs": 652,
+          "cumulativeShift": 0.04443131275177002,
+          "longTasks": 11
+        }
+      ],
+      "hostCount": 0,
+      "rendererMs": {
+        "TaskDuration": 1758.369,
+        "ScriptDuration": 1024.149,
+        "LayoutDuration": 106.309,
+        "RecalcStyleDuration": 107.82
+      }
+    }
+  ],
+  "copyFeedback": [
+    {
+      "repetition": 1,
+      "inputToDispatchMs": 17,
+      "dispatchToStatusMs": 3.599999997764826,
+      "statusToFirstFrameMs": 0,
+      "firstToSecondFrameMs": 8.900000002235174,
+      "mutationMs": 20.599999997764826,
+      "nextFrameMs": 29.5,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 2,
+      "inputToDispatchMs": 4.300000000745058,
+      "dispatchToStatusMs": 1.0999999977648258,
+      "statusToFirstFrameMs": 4.5,
+      "firstToSecondFrameMs": 7.400000002235174,
+      "mutationMs": 5.399999998509884,
+      "nextFrameMs": 17.300000000745058,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 3,
+      "inputToDispatchMs": 3.199999999254942,
+      "dispatchToStatusMs": 0.8999999985098839,
+      "statusToFirstFrameMs": 6.300000000745058,
+      "firstToSecondFrameMs": 7.300000000745058,
+      "mutationMs": 4.099999997764826,
+      "nextFrameMs": 17.699999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 4,
+      "inputToDispatchMs": 2.800000000745058,
+      "dispatchToStatusMs": 1.5999999977648258,
+      "statusToFirstFrameMs": 6.5,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 4.399999998509884,
+      "nextFrameMs": 18.099999997764826,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 5,
+      "inputToDispatchMs": 2.699999999254942,
+      "dispatchToStatusMs": 1.199999999254942,
+      "statusToFirstFrameMs": 6.399999998509884,
+      "firstToSecondFrameMs": 7.400000002235174,
+      "mutationMs": 3.899999998509884,
+      "nextFrameMs": 17.699999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 6,
+      "inputToDispatchMs": 2.900000002235174,
+      "dispatchToStatusMs": 0.8999999985098839,
+      "statusToFirstFrameMs": 6.600000001490116,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 3.800000000745058,
+      "nextFrameMs": 17.600000001490116,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 7,
+      "inputToDispatchMs": 3,
+      "dispatchToStatusMs": 1.4000000022351742,
+      "statusToFirstFrameMs": 6.199999999254942,
+      "firstToSecondFrameMs": 7.300000000745058,
+      "mutationMs": 4.400000002235174,
+      "nextFrameMs": 17.900000002235174,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 8,
+      "inputToDispatchMs": 2.399999998509884,
+      "dispatchToStatusMs": 2.100000001490116,
+      "statusToFirstFrameMs": 6.199999999254942,
+      "firstToSecondFrameMs": 7.199999999254942,
+      "mutationMs": 4.5,
+      "nextFrameMs": 17.899999998509884,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 9,
+      "inputToDispatchMs": 3.300000000745058,
+      "dispatchToStatusMs": 1.5,
+      "statusToFirstFrameMs": 4.600000001490116,
+      "firstToSecondFrameMs": 7.300000000745058,
+      "mutationMs": 4.800000000745058,
+      "nextFrameMs": 16.700000002980232,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 10,
+      "inputToDispatchMs": 2.5,
+      "dispatchToStatusMs": 1.6000000014901161,
+      "statusToFirstFrameMs": 6.899999998509884,
+      "firstToSecondFrameMs": 99.20000000298023,
+      "mutationMs": 4.100000001490116,
+      "nextFrameMs": 110.20000000298023,
+      "overlappingLongTasks": [
+        {
+          "startAfterInputMs": 14,
+          "durationMs": 93
+        }
+      ],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 11,
+      "inputToDispatchMs": 11.100000001490116,
+      "dispatchToStatusMs": 1.800000000745058,
+      "statusToFirstFrameMs": 0.5999999977648258,
+      "firstToSecondFrameMs": 4.100000001490116,
+      "mutationMs": 12.900000002235174,
+      "nextFrameMs": 17.600000001490116,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 12,
+      "inputToDispatchMs": 3.5,
+      "dispatchToStatusMs": 1.3999999985098839,
+      "statusToFirstFrameMs": 4,
+      "firstToSecondFrameMs": 7.600000001490116,
+      "mutationMs": 4.899999998509884,
+      "nextFrameMs": 16.5,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    }
+  ],
+  "tracedCopyFeedback": [],
+  "complete": true
+}
