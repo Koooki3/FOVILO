@@ -605,3 +605,53 @@ test('Simplified Chinese labels and commands remain usable at 200 percent zoom',
     await rm(profile, { recursive: true, force: true });
   }
 });
+
+test('English fallback follows native RTL layout and keeps timestamp URLs left-to-right', async () => {
+  const work = resolve('work');
+  await mkdir(work, { recursive: true });
+  const profile = await mkdtemp(join(work, 'rtl-chromium-'));
+  let context;
+  try {
+    const dist = resolve('dist');
+    context = await chromium.launchPersistentContext(profile, {
+      channel: 'chromium', locale: 'ar-SA', viewport: { width: 640, height: 800 },
+      args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
+    });
+    await context.route(origin + watch(first), (route) => route.fulfill({
+      contentType: 'text/html',
+      headers: { 'Permissions-Policy': 'clipboard-write=()' },
+      body: `<!doctype html><html lang="ar" dir="rtl"><title>فيديو</title>
+        <ytd-watch-flexy video-id="${first}">
+          <div id="movie_player"><video class="html5-main-video" src="${audioFixture()}" controls></video></div>
+          <div id="above-the-fold"><h1>عنوان الفيديو</h1></div>
+        </ytd-watch-flexy>
+      </html>`,
+    }));
+    const page = context.pages()[0];
+    await page.goto(origin + watch(first));
+    const rail = page.locator(host);
+    const copy = rail.getByRole('button', { name: 'Copy time link' });
+    await copy.waitFor();
+    assert.equal(await rail.getAttribute('lang'), 'en');
+    assert.equal(await rail.evaluate((element) => getComputedStyle(element).direction), 'rtl');
+    const disclosure = await rail.getByRole('button', { name: 'Watch controls' }).boundingBox();
+    const restore = await rail.getByRole('button', { name: 'Return to YouTube' }).boundingBox();
+    assert.ok(disclosure.x > restore.x);
+    await page.waitForFunction(() => document.querySelector('video').readyState > 0);
+    await copy.press('Enter');
+    const manual = rail.getByRole('textbox', { name: 'Time link for manual copying' });
+    assert.equal(await manual.inputValue(), origin + watch(first) + '&t=0s');
+    assert.equal(await manual.evaluate((element) => getComputedStyle(element).direction), 'ltr');
+    const commands = rail.getByRole('button', { name: 'Commands', exact: true });
+    await commands.press('Enter');
+    const dialog = rail.getByRole('dialog', { name: 'Commands' });
+    const search = dialog.getByRole('searchbox', { name: 'Find a command' });
+    await search.fill('بحث');
+    assert.equal(await search.evaluate((element) => getComputedStyle(element).direction), 'rtl');
+    await page.keyboard.press('Escape');
+    assert.equal(await commands.evaluate((element) => element.getRootNode().activeElement === element), true);
+  } finally {
+    await context?.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});

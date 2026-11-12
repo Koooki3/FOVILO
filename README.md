@@ -40,7 +40,7 @@ If the browser blocks clipboard access, FOVILO shows the link in a selectable fi
 
 ## Development
 
-Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md) and [release material plan](docs/RELEASE_MATERIALS.md).
+Run `npm run typecheck`, `npm run lint` (manifest policy), and `npm test`. For the browser fixture, install the browser with `npx playwright-core install chromium --no-shell` and run `npm run test:browser`. See the [verification matrix](docs/QA_MATRIX.md) [release material plan](docs/RELEASE_MATERIALS.md), [release runbook](docs/RELEASE_RUNBOOK.md), and [privacy notice](PRIVACY.md).
 
 Run `npm run test:live` separately when the test browser can reach YouTube. It uses a fresh signed-out profile and a public Blender video.
 

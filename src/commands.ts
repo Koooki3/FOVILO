@@ -54,6 +54,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   label.textContent = t('findCommand');
   const search = document.createElement('input');
   search.type = 'search';
+  search.dir = 'auto';
   label.append(search);
   const recent = document.createElement('div');
   recent.className = 'recent-commands';

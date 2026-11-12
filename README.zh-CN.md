@@ -38,7 +38,7 @@ FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。点击 **恢复原
 
 ## 开发
 
-运行 `npm run typecheck`、`npm run lint`（Manifest 策略检查）和 `npm test`。浏览器夹具测试需先运行 `npx playwright-core install chromium --no-shell`，再运行 `npm run test:browser`。参见[验证矩阵](docs/QA_MATRIX.md)和[宣发物料计划](docs/RELEASE_MATERIALS.md)。
+运行 `npm run typecheck`、`npm run lint`（Manifest 策略检查）和 `npm test`。浏览器夹具测试需先运行 `npx playwright-core install chromium --no-shell`，再运行 `npm run test:browser`。参见[验证矩阵](docs/QA_MATRIX.md)、[宣发物料计划](docs/RELEASE_MATERIALS.md)、[发布流程](docs/RELEASE_RUNBOOK.md)及[隐私说明](PRIVACY.md)。
 
 测试浏览器能访问 YouTube 时，可单独运行 `npm run test:live`。该测试使用全新的无登录配置和 Blender 的公开视频。
 

@@ -124,6 +124,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
   let returning = false;
   const link = document.createElement('input');
   link.readOnly = true;
+  link.dir = 'ltr';
   link.hidden = true;
   link.setAttribute('aria-label', t('manualTimeLink'));
 
