@@ -30,4 +30,4 @@ The Home rail appears above the native feed, including the signed-out empty stat
 
 ## Commands
 
-Each rail exposes the same keyboard-accessible **Commands** launcher, including when the rail is collapsed. The dialog opens with focus on search. It lists actions for the current surface and checks capability before executing. Commands reuse the visible controls' operation handlers. Escape returns focus to the launcher and route disposal closes the dialog. The first version uses a visible launcher and local dialog keys.
+Each rail exposes the same keyboard-accessible **Commands** launcher, including when the rail is collapsed. The dialog opens with focus on search. It lists actions for the current surface and checks capability before executing. Commands reuse the visible controls' operation handlers. Escape restores the launcher's focus or the prior focus for a browser shortcut. Route disposal closes the dialog. The browser owns shortcut assignment, and FOVILO ships the command unbound.

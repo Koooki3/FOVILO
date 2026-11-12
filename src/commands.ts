@@ -43,11 +43,13 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   const results = document.createElement('ul');
   const empty = document.createElement('p');
   empty.setAttribute('role', 'status');
+  let returnFocus: HTMLElement = trigger;
 
   function close() {
     if (!dialog.open) return;
     dialog.close();
-    trigger.focus({ preventScroll: true });
+    const target = returnFocus.isConnected ? returnFocus : trigger;
+    if (target.isConnected) target.focus({ preventScroll: true });
   }
 
   function execute(command: Command) {
@@ -77,12 +79,17 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
     empty.textContent = rows.every(({ row }) => row.hidden) ? 'No matching commands.' : '';
   }
 
-  trigger.addEventListener('click', (event) => {
-    if (!event.isTrusted || dialog.open) return;
+  function open(fromShortcut = false) {
+    if (signal.aborted || !dialog.isConnected || dialog.open) return;
+    const previous = document.activeElement === shadow.host ? shadow.activeElement : document.activeElement;
+    returnFocus = fromShortcut && previous instanceof HTMLElement && previous !== document.body ? previous : trigger;
     search.value = '';
     filter();
     dialog.showModal();
     search.focus();
+  }
+  trigger.addEventListener('click', (event) => {
+    if (event.isTrusted) open();
   }, { signal });
   closeButton.addEventListener('click', close, { signal });
   search.addEventListener('input', filter, { signal });
@@ -115,5 +122,5 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   }, { once: true });
   dialog.append(heading, label, results, empty);
   shadow.append(styles, dialog);
-  return trigger;
+  return { trigger, open };
 }

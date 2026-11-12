@@ -54,7 +54,7 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     const host = page.locator('[data-fovilo-watch]');
     const searchRail = page.locator('[data-fovilo-search]');
     const homeRail = page.locator('[data-fovilo-home]');
-    const search = page.locator('input[name="search_query"]').first();
+    const search = page.locator('input[name="search_query"]:visible').first();
     async function runSearch() {
       await search.fill(query);
       await search.press('Enter');
@@ -305,7 +305,7 @@ test('playlist handoffs and native captions preserve Watch controls', { timeout:
     }
 
     const response = await page.goto(origin + '/watch?v=' + videoId + '&list=' + playlist, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'commit',
     });
     assert.equal(response?.status(), 200);
     await host.waitFor();

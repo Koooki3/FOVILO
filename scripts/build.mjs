@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 await mkdir('dist', { recursive: true });
 await cp('public', 'dist', { recursive: true });
 await build({
-  entryPoints: { content: 'src/content.ts', popup: 'src/popup.ts' },
+  entryPoints: { content: 'src/content.ts', popup: 'src/popup.ts', background: 'src/background.ts' },
   outdir: 'dist',
   bundle: true,
   format: 'iife',

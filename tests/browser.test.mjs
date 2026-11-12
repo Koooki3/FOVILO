@@ -305,6 +305,21 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     const extensionId = await extension.getAttribute('id');
     assert.match(extensionId, /^[a-p]{32}$/);
     await manager.goto('chrome-extension://' + extensionId + '/popup.html');
+    const worker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
+    assert.deepEqual(await worker.evaluate(async () => {
+      const command = (await chrome.commands.getAll()).find((entry) => entry.name === 'open-commands');
+      return [command?.shortcut, chrome.commands.onCommand.hasListeners()];
+    }), ['', true]);
+    const shortcutsPromise = context.waitForEvent('page');
+    await manager.getByRole('button', { name: 'Keyboard shortcuts' }).click();
+    const shortcuts = await shortcutsPromise;
+    await shortcuts.waitForURL('chrome://extensions/shortcuts');
+    await shortcuts.getByText('Open FOVILO Commands', { exact: true }).waitFor();
+    await shortcuts.getByRole('button', { name: /Open FOVILO Commands/ }).click();
+    await shortcuts.keyboard.press('Control+Shift+9');
+    assert.equal(await worker.evaluate(async () =>
+      (await chrome.commands.getAll()).find((entry) => entry.name === 'open-commands')?.shortcut), 'Ctrl+Shift+9');
+    await shortcuts.close();
     const popupCdp = await context.newCDPSession(manager);
     assert.equal((await politeStatusNodes(popupCdp)).length, 1);
     await popupCdp.detach();
@@ -319,6 +334,32 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await watchToggle.check();
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+
+    async function sendShortcut() {
+      const sender = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
+      await sender.evaluate(async () => {
+        const [tab] = await chrome.tabs.query({ index: 0, currentWindow: true });
+        await chrome.tabs.sendMessage(tab.id, { type: 'fovilo.open-commands' }, { frameId: 0 });
+      });
+    }
+    await page.bringToFront();
+    await page.getByRole('textbox', { name: 'Native comment' }).focus();
+    await sendShortcut();
+    assert.equal(await commandDialog.count(), 0);
+    const video = page.locator('video');
+    await video.focus();
+    await sendShortcut();
+    await commandDialog.waitFor();
+    await page.keyboard.press('Escape');
+    assert.equal(await video.evaluate((element) => document.activeElement === element), true);
+    await video.evaluate((element) => element.addEventListener('click', () => {
+      void element.requestFullscreen();
+    }, { once: true }));
+    await video.click({ position: { x: 10, y: 10 } });
+    await page.waitForFunction(() => document.fullscreenElement !== null);
+    await sendShortcut();
+    assert.equal(await commandDialog.count(), 0);
+    await page.evaluate(() => document.exitFullscreen());
 
     const homeToggle = manager.getByRole('checkbox', { name: 'Home controls' });
     await page.evaluate(async () => {
@@ -442,6 +483,8 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
     await page.keyboard.press('Enter');
     await page.locator(host).waitFor({ state: 'detached' });
+    await sendShortcut();
+    assert.equal(await commandDialog.count(), 0);
     const title = page.getByRole('heading', { name: 'Native title' });
     assert.deepEqual(await hierarchy(), ['500', '400', '500']);
     assert.equal(await title.evaluate((heading) => heading === document.activeElement), true);

@@ -10,6 +10,14 @@
   "action": {
     "default_popup": "popup.html"
   },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "open-commands": {
+      "description": "Open FOVILO Commands"
+    }
+  },
   "content_scripts": [
     {
       "matches": [

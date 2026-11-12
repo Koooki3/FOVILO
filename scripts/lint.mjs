@@ -3,11 +3,13 @@ import assert from 'node:assert/strict';
 
 const manifest = JSON.parse(await readFile('public/manifest.json', 'utf8'));
 assert.deepEqual(Object.keys(manifest).sort(), [
-  'action', 'content_scripts', 'description', 'manifest_version',
+  'action', 'background', 'commands', 'content_scripts', 'description', 'manifest_version',
   'minimum_chrome_version', 'name', 'permissions', 'version',
 ]);
 assert.equal(manifest.manifest_version, 3);
 assert.deepEqual(manifest.permissions, ['storage']);
+assert.deepEqual(manifest.background, { service_worker: 'background.js' });
+assert.deepEqual(manifest.commands, { 'open-commands': { description: 'Open FOVILO Commands' } });
 assert.deepEqual(manifest.content_scripts, [{
   matches: ['https://www.youtube.com/*'],
   js: ['content.js'],

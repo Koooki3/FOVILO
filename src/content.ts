@@ -6,11 +6,12 @@ import { mountSearch } from './search.ts';
 import { mountHome } from './home.ts';
 import { browseRootSelector } from './browse-rail.ts';
 import { createCommands } from './commands.ts';
+import { onShortcut } from './shortcut.ts';
 
 const ownedSelector = '[data-fovilo-watch], [data-fovilo-search], [data-fovilo-home]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
 type Route = { kind: 'watch'; id: string; modesAvailable: boolean } | { kind: 'search' | 'home' };
-type Surface = { anchor: Element; host: HTMLElement; dispose: () => void };
+type Surface = { anchor: Element; host: HTMLElement; openCommands: () => void; dispose: () => void };
 type Mounted = Surface & { key: string };
 let mounted: Mounted | undefined;
 let enabled = false;
@@ -79,6 +80,15 @@ function currentRoute(): Route | undefined {
 function routeRoot(route: Route) {
   return route.kind === 'watch' ? watchRoot(route.id) : unique(document, browseRootSelector(route.kind));
 }
+
+function routeKey(route: Route) {
+  return route.kind === 'watch' ? route.id + ':' + route.modesAvailable : route.kind;
+}
+
+onShortcut(() => {
+  const route = currentRoute();
+  if (route && mounted?.key === routeKey(route) && mounted.host.isConnected) mounted.openCommands();
+});
 
 function currentMedia(root: Element, id: string) {
   const element = unique<HTMLVideoElement>(root, '#movie_player video.html5-main-video');
@@ -217,7 +227,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     { label: 'Toggle Watch controls', run: toggleRail },
     { label: 'Return to YouTube', run: restoreYouTube },
   ], signal);
-  restore.before(commands);
+  restore.before(commands.trigger);
 
   actions.append(time, ...modes.map((mode) => mode.button));
   panel.append(link);
@@ -225,6 +235,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
   return {
     anchor,
     host,
+    openCommands: () => { if (current()) commands.open(true); },
     dispose() {
       if (returning && document.activeElement === host && current()) {
         const target = anchor.querySelector('h1') ?? anchor;
@@ -259,7 +270,7 @@ function reconcile(allowRetry: boolean) {
   observeRoot(root);
   if (root && route.kind === 'watch') currentMedia(root, route.id);
   const anchor = root && unique(root, route.kind === 'watch' ? '#above-the-fold' : '#primary');
-  const key = route.kind === 'watch' ? route.id + ':' + route.modesAvailable : route.kind;
+  const key = routeKey(route);
   if (mounted && (mounted.key !== key || mounted.anchor !== anchor ||
       mounted.host.parentElement !== anchor)) dispose();
   if (!anchor) {

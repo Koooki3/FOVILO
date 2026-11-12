@@ -6,9 +6,9 @@ export function mountHome(anchor: Element) {
   subscriptions.href = '/feed/subscriptions';
   subscriptions.textContent = 'Subscriptions';
   actions.append(subscriptions);
-  addCommands([{ label: 'Open Subscriptions', run() {
+  const openCommands = addCommands([{ label: 'Open Subscriptions', run() {
     if (current()) location.assign(subscriptions.href);
   } }]);
   anchor.prepend(host);
-  return { anchor, host, dispose };
+  return { anchor, host, openCommands, dispose };
 }
