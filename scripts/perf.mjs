@@ -9,12 +9,14 @@ import { measureCopies } from './perf-interactions.mjs';
 const live = process.argv.includes('--live');
 const captureTraces = process.argv.includes('--trace');
 const captureInteractions = process.argv.includes('--interactions');
+const keyboardCopy = process.argv.includes('--keyboard-copy');
 const requestedRounds = process.argv.find((arg) => arg.startsWith('--rounds='));
 const defaultVideo = 'aqz-KE-bpKQ';
 const videoOption = process.argv.find((arg) => arg.startsWith('--video='));
 const videoId = videoOption ? videoOption.slice('--video='.length) : defaultVideo;
 assert.match(videoId, /^[\w-]{11}$/);
 assert.ok(live || !captureInteractions, '--interactions requires --live');
+assert.ok(!keyboardCopy || captureInteractions, '--keyboard-copy requires --interactions');
 const url = 'https://www.youtube.com/watch?v=' + videoId;
 const modes = ['native', 'off', 'on'];
 const rounds = requestedRounds ? Number(requestedRounds.slice('--rounds='.length)) : 6;
@@ -23,7 +25,7 @@ assert.ok(rounds > 0 || captureInteractions, '--rounds=0 requires --interactions
 const checkpointsMs = [1500, 3500];
 const viewport = { width: 1280, height: 800 };
 const output = resolve('work', live ? 'perf-live' : 'perf-fixture',
-  videoOption ? videoId : '', rounds === 0 ? 'interactions' : '');
+  videoOption ? videoId : '', keyboardCopy ? 'keyboard-copy' : rounds === 0 ? 'interactions' : '');
 const dist = resolve('dist');
 const counters = ['TaskDuration', 'ScriptDuration', 'LayoutDuration', 'RecalcStyleDuration'];
 
@@ -209,6 +211,7 @@ const report = {
   host: { platform: platform(), release: release(), cpu: cpus()[0]?.model, node: process.version },
   build, browsers: {}, samples, copyFeedback: [], tracedCopyFeedback: [],
 };
+if (captureInteractions) report.copyInput = keyboardCopy ? 'keyboard-default-permissions' : 'pointer-granted-permissions';
 const copyRepetitions = captureInteractions ? 12 : 0;
 const sessions = new Map();
 try {
@@ -232,10 +235,11 @@ try {
   }
   if (copyRepetitions) {
     const session = sessions.get('on');
-    report.copyFeedback = await measureCopies(session, url, copyRepetitions);
+    report.copyFeedback = await measureCopies(session, url, copyRepetitions, { keyboard: keyboardCopy });
     if (captureTraces) {
       report.tracedCopyFeedback = await captureTrace(
-        session, 'copy', () => measureCopies(session, url, copyRepetitions, true), ',input,latencyInfo',
+        session, 'copy', () => measureCopies(session, url, copyRepetitions, { keyboard: keyboardCopy, traceMarks: true }),
+        ',input,latencyInfo',
       );
     }
   }

@@ -86,3 +86,22 @@ To regenerate the figure from the retained reports with Python and Matplotlib 3.
 ```sh
 python scripts/plot_watch_performance.py docs/evidence/watch-9bffcb2/big-buck-bunny.json docs/evidence/watch-9bffcb2/sintel.json docs/media/watch-performance.png
 ```
+
+## Keyboard copy with default permissions
+
+Run the following command for each of the two video IDs (`aqz-KE-bpKQ` and `eRsGyueVLvQ`).
+
+```sh
+npm run perf -- --live --rounds=0 --video=aqz-KE-bpKQ --interactions --keyboard-copy
+```
+
+This mode uses a fresh profile with default clipboard permissions. It measures from trusted Enter keydown to the status update and the second animation-frame callback. After each timing window, a keyboard paste into a temporary input checks the copied URL. Each run has 12 activations on one paused Watch page. Reports go to `work/perf-live/<id>/keyboard-copy/samples.json`. The default pointer run continues to grant clipboard permissions and time from click.
+
+On Windows with headless Chrome for Testing 145.0.7632.6 at 1280 × 800, all 24 keyboard trials reported success and passed the paste check. Both reports record the content script from `811258f`. [Big Buck Bunny keyboard samples](evidence/watch-811258f/keyboard-big-buck-bunny.json) · [Sintel keyboard samples](evidence/watch-811258f/keyboard-sintel.json)
+
+| Video | Enter to status update, median / maximum | Enter to second frame, median / maximum |
+| --- | ---: | ---: |
+| Big Buck Bunny | 6.60 / 65.20 ms | 19.70 / 115.70 ms |
+| Sintel | 10.35 / 201.90 ms | 25.70 / 269.60 ms |
+
+The slow tail was present with default clipboard permissions as well. The keyboard runs differ from the earlier pointer runs in both input and permissions. The results describe one browser and machine, and the second frame is a paint opportunity proxy. Keep the interaction performance gate open for additional devices and a release threshold.

@@ -1,0 +1,192 @@
+{
+  "scenario": "signed-out live Watch navigation",
+  "startedAt": "2026-11-12T11:19:31.569Z",
+  "url": "https://www.youtube.com/watch?v=eRsGyueVLvQ",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "checkpointsMs": [
+    1500,
+    3500
+  ],
+  "rounds": 0,
+  "host": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX",
+    "node": "v24.13.1"
+  },
+  "build": {
+    "manifest.json": {
+      "bytes": 681,
+      "sha256": "e74eeb19eb2fc7ece777a8bd8faef3da4670e7ab51b7710a5f24574eae242341"
+    },
+    "content.js": {
+      "bytes": 38570,
+      "sha256": "9d8361828e3cb3b9e8f908cf65f271f24897bcd48cb90e2da7325b3a3b49ba05"
+    }
+  },
+  "browsers": {
+    "on": "Chrome/145.0.7632.6"
+  },
+  "samples": [],
+  "copyFeedback": [
+    {
+      "repetition": 1,
+      "inputToDispatchMs": 10.300000000745058,
+      "dispatchToStatusMs": 55.600000001490116,
+      "statusToFirstFrameMs": 16.599999997764826,
+      "firstToSecondFrameMs": 26.600000001490116,
+      "mutationMs": 65.90000000223517,
+      "nextFrameMs": 109.10000000149012,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 2,
+      "inputToDispatchMs": 2.5,
+      "dispatchToStatusMs": 3.099999997764826,
+      "statusToFirstFrameMs": 19,
+      "firstToSecondFrameMs": 6.600000001490116,
+      "mutationMs": 5.599999997764826,
+      "nextFrameMs": 31.199999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 0,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 3,
+      "inputToDispatchMs": 0.8000000007450581,
+      "dispatchToStatusMs": 24.199999999254942,
+      "statusToFirstFrameMs": 4.400000002235174,
+      "firstToSecondFrameMs": 4.199999999254942,
+      "mutationMs": 25,
+      "nextFrameMs": 33.600000001490116,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 4,
+      "inputToDispatchMs": 0.6999999992549419,
+      "dispatchToStatusMs": 5.699999999254942,
+      "statusToFirstFrameMs": 1.6000000014901161,
+      "firstToSecondFrameMs": 6.699999999254942,
+      "mutationMs": 6.399999998509884,
+      "nextFrameMs": 14.699999999254942,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 5,
+      "inputToDispatchMs": 0.8000000007450581,
+      "dispatchToStatusMs": 5.5,
+      "statusToFirstFrameMs": 2.5,
+      "firstToSecondFrameMs": 7,
+      "mutationMs": 6.300000000745058,
+      "nextFrameMs": 15.800000000745058,
+      "overlappingLongTasks": [],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 6,
+      "inputToDispatchMs": 29.899999998509884,
+      "dispatchToStatusMs": 172,
+      "statusToFirstFrameMs": 31.900000002235174,
+      "firstToSecondFrameMs": 35.79999999701977,
+      "mutationMs": 201.89999999850988,
+      "nextFrameMs": 269.5999999977648,
+      "overlappingLongTasks": [
+        {
+          "startAfterInputMs": 30.699999999254942,
+          "durationMs": 62
+        },
+        {
+          "startAfterInputMs": 93.69999999925494,
+          "durationMs": 97
+        }
+      ],
+      "seconds": 1,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 7,
+      "inputToDispatchMs": 7.600000001490116,
+      "dispatchToStatusMs": 5.899999998509884,
+      "statusToFirstFrameMs": 9,
+      "firstToSecondFrameMs": 20.900000002235174,
+      "mutationMs": 13.5,
+      "nextFrameMs": 43.400000002235174,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 8,
+      "inputToDispatchMs": 5.399999998509884,
+      "dispatchToStatusMs": 4.900000002235174,
+      "statusToFirstFrameMs": 6.199999999254942,
+      "firstToSecondFrameMs": 6.399999998509884,
+      "mutationMs": 10.300000000745058,
+      "nextFrameMs": 22.899999998509884,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 9,
+      "inputToDispatchMs": 6.400000002235174,
+      "dispatchToStatusMs": 2.5,
+      "statusToFirstFrameMs": 4.199999999254942,
+      "firstToSecondFrameMs": 6.800000000745058,
+      "mutationMs": 8.900000002235174,
+      "nextFrameMs": 19.900000002235174,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 10,
+      "inputToDispatchMs": 7.300000000745058,
+      "dispatchToStatusMs": 3.100000001490116,
+      "statusToFirstFrameMs": 6.399999998509884,
+      "firstToSecondFrameMs": 6.600000001490116,
+      "mutationMs": 10.400000002235174,
+      "nextFrameMs": 23.400000002235174,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 11,
+      "inputToDispatchMs": 6.300000000745058,
+      "dispatchToStatusMs": 3.800000000745058,
+      "statusToFirstFrameMs": 6.5,
+      "firstToSecondFrameMs": 6.399999998509884,
+      "mutationMs": 10.100000001490116,
+      "nextFrameMs": 23,
+      "overlappingLongTasks": [],
+      "seconds": 2,
+      "feedback": "Time link copied."
+    },
+    {
+      "repetition": 12,
+      "inputToDispatchMs": 7,
+      "dispatchToStatusMs": 6.600000001490116,
+      "statusToFirstFrameMs": 5.899999998509884,
+      "firstToSecondFrameMs": 8.5,
+      "mutationMs": 13.600000001490116,
+      "nextFrameMs": 28,
+      "overlappingLongTasks": [],
+      "seconds": 3,
+      "feedback": "Time link copied."
+    }
+  ],
+  "tracedCopyFeedback": [],
+  "copyInput": "keyboard-default-permissions",
+  "complete": true
+}

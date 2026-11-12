@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 
-export async function measureCopies({ page, context }, url, repetitions, traceMarks = false) {
+export async function measureCopies({ page, context }, url, repetitions, { keyboard = false, traceMarks = false } = {}) {
   const videoUrl = new URL(url);
-  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: videoUrl.origin });
+  if (!keyboard) await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: videoUrl.origin });
   const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
   assert.equal(response?.status(), 200);
   await page.waitForFunction(() => {
@@ -14,10 +14,19 @@ export async function measureCopies({ page, context }, url, repetitions, traceMa
   await page.locator('#movie_player video.html5-main-video').evaluate((video) => video.pause());
 
   const button = page.locator('[data-fovilo-watch]').getByRole('button', { name: 'Copy time link' });
+  const pasteTarget = page.locator('[data-fovilo-perf-paste]');
+  if (keyboard) {
+    await page.evaluate(() => {
+      const input = document.createElement('input');
+      input.dataset.foviloPerfPaste = '';
+      input.style.cssText = 'position:fixed; inset:0 auto auto 0; opacity:0; pointer-events:none';
+      document.body.append(input);
+    });
+  }
   const samples = [];
   for (let index = 0; index < repetitions; index += 1) {
     const repetition = index + 1;
-    await button.evaluate((button, { repetition, traceMarks }) => {
+    await button.evaluate((button, { repetition, traceMarks, keyboard }) => {
       const status = button.getRootNode().querySelector('[role=status]');
       window.foviloCopyProbe = new Promise((resolve) => {
         const cancel = new AbortController();
@@ -27,6 +36,12 @@ export async function measureCopies({ page, context }, url, repetitions, traceMa
         const mark = (phase, startTime) => {
           if (traceMarks) performance.mark('fovilo-copy-' + repetition + '-' + phase, { startTime });
         };
+        let keyInput;
+        if (keyboard) {
+          button.addEventListener('keydown', (event) => {
+            if (event.isTrusted && event.key === 'Enter') keyInput = event.timeStamp;
+          }, { capture: true, signal: cancel.signal });
+        }
         let observer;
         const timer = setTimeout(() => {
           cancel.abort();
@@ -35,8 +50,9 @@ export async function measureCopies({ page, context }, url, repetitions, traceMa
           resolve(null);
         }, 5000);
         button.addEventListener('click', (event) => {
-          if (!event.isTrusted) return;
-          const input = event.timeStamp;
+          if (!event.isTrusted || (keyboard && keyInput === undefined)) return;
+          const input = keyboard ? keyInput : event.timeStamp;
+          cancel.abort();
           const dispatch = performance.now();
           mark('input', input);
           mark('dispatch', dispatch);
@@ -75,14 +91,21 @@ export async function measureCopies({ page, context }, url, repetitions, traceMa
           observer.observe(status, { childList: true, subtree: true, characterData: true });
         }, { capture: true, once: true, signal: cancel.signal });
       });
-    }, { repetition, traceMarks });
-    await button.click();
+    }, { repetition, traceMarks, keyboard });
+    if (keyboard) await button.press('Enter');
+    else await button.click();
     const sample = await page.evaluate(() => window.foviloCopyProbe);
     assert.ok(sample, 'time-link feedback was not observed');
     assert.equal(sample.feedback, 'Time link copied.');
     const expected = new URL(url);
     expected.searchParams.set('t', sample.seconds + 's');
-    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected.href);
+    if (keyboard) {
+      await pasteTarget.fill('');
+      await pasteTarget.press('ControlOrMeta+V');
+      assert.equal(await pasteTarget.inputValue(), expected.href);
+    } else {
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected.href);
+    }
     samples.push({ repetition, ...sample });
   }
   await page.goto('about:blank');
