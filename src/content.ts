@@ -11,6 +11,7 @@ let failed = false;
 let pending = false;
 let retry: number | undefined;
 let observedRoot: Element | undefined;
+let railExpanded = true;
 let lastMedia: { id: string; element: HTMLVideoElement; src: string } | undefined;
 
 const anchorObserver = new MutationObserver(() => {
@@ -84,12 +85,24 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
       border: 1px solid GrayText; border-radius: 8px; padding: 8px; }
     input { box-sizing: border-box; max-inline-size: 100%; }
     button:focus-visible, input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+    .rail-heading, .rail-actions {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      min-inline-size: 0; max-inline-size: 100%;
+    }
+    .rail-heading { margin-inline-end: auto; }
+    .rail-actions[hidden] { display: none; }
+    [aria-controls=fovilo-watch-actions]::after {
+      content: ''; display: inline-block; inline-size: 5px; block-size: 5px;
+      margin-inline-start: 8px; vertical-align: 0.17em;
+      border-inline-end: 1px solid currentColor; border-block-end: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+    [aria-controls=fovilo-watch-actions][aria-expanded=true]::after { transform: rotate(225deg); }
     [data-watch-mode=focus] { display: var(--fovilo-focus-display, none); }
     [data-watch-mode=cinema] { display: var(--fovilo-cinema-display, none); }
     [data-watch-mode][aria-pressed=true] {
       background: Highlight; color: HighlightText; border-color: Highlight;
     }
-    strong { margin-inline-end: auto; }
     [role=status] { flex-basis: 100%; }
     [role=status]:empty {
       position: absolute; inline-size: 1px; block-size: 1px;
@@ -100,6 +113,15 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
   panel.setAttribute('aria-label', 'FOVILO Watch controls');
   const label = document.createElement('strong');
   label.textContent = 'FOVILO';
+  const heading = document.createElement('div');
+  heading.className = 'rail-heading';
+  const toggle = document.createElement('button');
+  toggle.textContent = 'Watch controls';
+  toggle.setAttribute('aria-controls', 'fovilo-watch-actions');
+  heading.append(label, toggle);
+  const actions = document.createElement('div');
+  actions.className = 'rail-actions';
+  actions.id = 'fovilo-watch-actions';
   const time = document.createElement('button');
   time.textContent = 'Copy time link';
   const modes = [
@@ -137,6 +159,21 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
       watchRoot(id)?.contains(anchor);
   }
 
+  function syncRail() {
+    toggle.setAttribute('aria-expanded', String(railExpanded));
+    actions.hidden = !railExpanded;
+  }
+  syncRail();
+  toggle.addEventListener('click', (event) => {
+    if (!event.isTrusted || !current()) return;
+    railExpanded = !railExpanded;
+    syncRail();
+    if (!railExpanded) {
+      status.textContent = '';
+      link.hidden = true;
+    }
+  }, { signal });
+
   for (const mode of modes) {
     mode.button.addEventListener('click', (event) => {
       if (!event.isTrusted || !modesAvailable || !current()) return;
@@ -145,6 +182,7 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
       const next = host.dataset.foviloMode === mode.name ? 'everyday' : mode.name;
       host.dataset.foviloMode = next;
       for (const control of modes) control.button.setAttribute('aria-pressed', String(control.name === next));
+      toggle.textContent = next === 'everyday' ? 'Watch controls' : 'Watch controls · ' + mode.label;
       status.textContent = next === 'everyday' ? 'Everyday restored.' : mode.feedback;
     }, { signal });
   }
@@ -165,9 +203,9 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
     time.setAttribute('aria-disabled', 'true');
     try {
       await navigator.clipboard.writeText(url);
-      if (current()) status.textContent = 'Time link copied.';
+      if (current() && railExpanded) status.textContent = 'Time link copied.';
     } catch {
-      if (!current()) return;
+      if (!current() || !railExpanded) return;
       link.value = url;
       link.hidden = false;
       status.textContent = 'Clipboard unavailable. Copy the link manually.';
@@ -193,7 +231,8 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
     }
   }, { signal });
 
-  panel.append(label, time, ...modes.map((mode) => mode.button), restore, status, link);
+  actions.append(time, ...modes.map((mode) => mode.button));
+  panel.append(heading, actions, restore, status, link);
   shadow.append(styles, panel);
   anchor.append(host);
   return {

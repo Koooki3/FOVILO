@@ -10,6 +10,8 @@ Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据�
 
 按 **Cinema** 可收起推荐，并为页面内的播放器加上暗色衬底。Focus 和 Cinema 只能启用一个，再按当前模式即可回到 Everyday。
 
+按 **Watch controls** 可折叠或展开上下文栏。在同一个 YouTube 页面会话内切换视频时，栏的状态会保留。两种状态下都可以使用 **Return to YouTube**。
+
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)
 
 查看[启用与恢复对照](docs/RELEASE_MATERIALS.md#watch-development-preview)及录制环境。影片片段 © 2008 Blender Foundation，[CC BY 3.0](https://peach.blender.org/about/)。

@@ -96,6 +96,18 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
     await page.getByRole('link', { name: 'Native action' }).focus();
     await page.keyboard.press('Tab');
+    const rail = page.getByRole('button', { name: /^Watch controls/ });
+    assert.equal(await rail.evaluate((button) =>
+      button.getRootNode().activeElement === button &&
+      button.getRootNode().getElementById(button.getAttribute('aria-controls')) !== null), true);
+    assert.equal(await rail.getAttribute('aria-expanded'), 'true');
+    await page.keyboard.press('Space');
+    assert.equal(await rail.getAttribute('aria-expanded'), 'false');
+    assert.equal(await page.getByRole('button', { name: 'Copy time link' }).count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'Return to YouTube' }).isVisible(), true);
+    await page.keyboard.press('Enter');
+    assert.equal(await rail.getAttribute('aria-expanded'), 'true');
+    await page.keyboard.press('Tab');
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Copy time link');
     await page.keyboard.press('Space');
     await page.getByText('Time link copied.').waitFor();
@@ -159,6 +171,9 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await cinema.getAttribute('aria-pressed'), 'false');
     await cinema.click();
     await recommendations.waitFor({ state: 'hidden' });
+    await rail.click();
+    assert.equal(await rail.getAttribute('aria-expanded'), 'false');
+    assert.equal(await rail.innerText(), 'Watch controls · Cinema');
 
     await page.evaluate((path) => history.pushState(null, '', path), watch(second));
     await page.locator(host).waitFor({ state: 'detached' });
@@ -172,6 +187,10 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     }, second);
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+    assert.equal(await rail.getAttribute('aria-expanded'), 'false');
+    assert.equal(await rail.innerText(), 'Watch controls');
+    assert.equal(await page.getByRole('button', { name: 'Copy time link' }).count(), 0);
+    await rail.click();
     assert.equal(await focus.getAttribute('aria-pressed'), 'false');
     await page.getByRole('button', { name: 'Copy time link' }).click();
     await page.getByText('The video timestamp is unavailable.').waitFor();
@@ -283,6 +302,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.ok(liveRegion, 'the empty polite status region should exist before interaction');
 
     await page.getByRole('link', { name: 'Native action' }).focus();
+    await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
     await page.getByRole('status').getByText('Clipboard unavailable. Copy the link manually.').waitFor();

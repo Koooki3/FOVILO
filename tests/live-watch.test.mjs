@@ -71,6 +71,11 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     await page.waitForURL((url) => url.pathname === '/watch' && url.searchParams.get('v') === videoId);
     await host.waitFor();
     assert.equal(await host.count(), 1);
+    const rail = host.getByRole('button', { name: /^Watch controls/ });
+    await rail.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await rail.getAttribute('aria-expanded'), 'false');
+    assert.equal(await host.getByRole('button', { name: 'Return to YouTube' }).isVisible(), true);
     t.diagnostic('Search result opened with one Watch control');
 
     await runSearch();
@@ -81,6 +86,12 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     await host.waitFor({ state: 'detached' });
     await page.goBack({ waitUntil: 'commit' });
     await host.waitFor();
+    assert.equal(await rail.getAttribute('aria-expanded'), 'false');
+    assert.equal(await host.getByRole('button', { name: 'Copy time link' }).count(), 0);
+    await rail.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await rail.getAttribute('aria-expanded'), 'true');
+    t.diagnostic('Watch rail disclosure survived native navigation and reopened by keyboard');
     t.diagnostic('Watch → Search → Back → Forward → Back preserved the mount boundary');
 
     assert.deepEqual(await host.evaluate((element) => {

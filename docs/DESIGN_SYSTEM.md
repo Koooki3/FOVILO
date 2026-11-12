@@ -15,3 +15,7 @@ Focus is a video-scoped toggle for regular Watch pages with the expected recomme
 ## Cinema on Watch
 
 Cinema adds a dark matte around the existing inline player and hides the same recommendation subtree as Focus. The matte uses a spread shadow and leaves the player dimensions and hit targets intact. The native theater and fullscreen layouts take precedence. The controls expose one active mode at a time. Selecting the active mode again returns to Everyday. The first version applies the matte instantly.
+
+## Context Rail on Watch
+
+The inline rail groups time links and viewing modes behind a **Watch controls** disclosure. It starts expanded and preserves the user's choice across navigation in the same YouTube document. The controls wrap in narrow layouts. When collapsed, the disclosure names an active Focus or Cinema mode and **Return to YouTube** remains available. The disclosure has an explicit expanded state and removes hidden actions from the keyboard sequence. The rail stays in the metadata flow below the player.
