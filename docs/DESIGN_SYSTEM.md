@@ -11,3 +11,7 @@ The title leads with a responsive 20–24 px size and a 700 weight. The channel 
 ## Focus on Watch
 
 Focus is a video-scoped toggle for regular Watch pages with the expected recommendations container. It hides the recommendations subtree through the owned stylesheet and leaves the player, comments, and sibling sections in their native layout. The button retains its name and exposes its pressed state. Feedback uses a separate row so its appearance leaves the controls in place. Video changes and playlist routes reset the toggle. The layout stays static during the switch.
+
+## Cinema on Watch
+
+Cinema adds a dark matte around the existing inline player and hides the same recommendation subtree as Focus. The matte uses a spread shadow and leaves the player dimensions and hit targets intact. The native theater and fullscreen layouts take precedence. The controls expose one active mode at a time. Selecting the active mode again returns to Everyday. The first version applies the matte instantly.

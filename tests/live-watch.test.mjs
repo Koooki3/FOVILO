@@ -6,7 +6,7 @@ import { chromium } from 'playwright-core';
 
 const origin = 'https://www.youtube.com';
 const videoId = 'aqz-KE-bpKQ';
-const query = 'Big Buck Bunny 60fps 4K Blender aqz-KE-bpKQ';
+const query = 'Big Buck Bunny 60fps 4K Official Blender Foundation Short Film';
 
 function waitForPlayableVideo(page) {
   return page.waitForFunction(() => {
@@ -15,6 +15,17 @@ function waitForPlayableVideo(page) {
     return video?.readyState >= 2 && Number.isFinite(video.duration) &&
       !player.matches('.ad-showing, .ad-interrupting');
   });
+}
+
+async function toggleFullscreen(page, active) {
+  const player = page.locator('#movie_player');
+  await player.hover();
+  await player.locator('.ytp-fullscreen-button').click();
+  await page.waitForFunction((active) => {
+    if (!active) return document.fullscreenElement === null;
+    const player = document.querySelector('#movie_player');
+    return player && document.fullscreenElement?.contains(player);
+  }, active);
 }
 
 async function withLivePage(run) {
@@ -55,7 +66,7 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     assert.equal(await host.count(), 0);
     t.diagnostic('Home loaded without a Watch control');
     await runSearch();
-    const result = page.locator('ytd-video-renderer a#video-title[href*="/watch?v=' + videoId + '"]').first();
+    const result = page.locator('a[href*="/watch?v=' + videoId + '"]:visible').first();
     await result.click();
     await page.waitForURL((url) => url.pathname === '/watch' && url.searchParams.get('v') === videoId);
     await host.waitFor();
@@ -80,6 +91,7 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     t.diagnostic('Everyday hierarchy applied to the native title, channel and metadata');
 
     const focus = host.getByRole('button', { name: 'Focus', exact: true });
+    const cinema = host.getByRole('button', { name: 'Cinema', exact: true });
     const recommendations = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #secondary-inner > #related');
     const media = page.locator('#movie_player video.html5-main-video');
     await recommendations.waitFor();
@@ -99,16 +111,8 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     assert.equal(await focus.getAttribute('aria-pressed'), 'false');
     t.diagnostic('Focus toggled native recommendations without replacing the video or changing playback state');
 
-    const fullscreen = page.locator('#movie_player .ytp-fullscreen-button');
-    await page.locator('#movie_player').hover();
-    await fullscreen.click();
-    await page.waitForFunction(() => {
-      const player = document.querySelector('#movie_player');
-      return player && document.fullscreenElement?.contains(player);
-    });
-    await page.locator('#movie_player').hover();
-    await fullscreen.click();
-    await page.waitForFunction(() => document.fullscreenElement === null);
+    await toggleFullscreen(page, true);
+    await toggleFullscreen(page, false);
     assert.equal(await host.count(), 1);
     t.diagnostic('The native player entered and exited fullscreen with one Watch control');
 
@@ -142,8 +146,9 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     }), true);
     assert.equal(await copy.evaluate((button) => button.getRootNode().activeElement === button), true);
     await page.keyboard.press('Tab');
-    if (await focus.isVisible()) {
-      assert.equal(await focus.evaluate((button) => button.getRootNode().activeElement === button), true);
+    for (const mode of [focus, cinema]) {
+      if (!(await mode.isVisible())) continue;
+      assert.equal(await mode.evaluate((button) => button.getRootNode().activeElement === button), true);
       await page.keyboard.press('Tab');
     }
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
@@ -159,6 +164,43 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     });
     assert.equal(await host.count(), 0);
     t.diagnostic('Global off persisted after reloading the live Watch page');
+  }),
+);
+
+test('Cinema preserves inline playback and yields to native fullscreen', { timeout: 120_000 }, (t) =>
+  withLivePage(async (page) => {
+    await page.goto(origin + '/watch?v=' + videoId, { waitUntil: 'domcontentloaded' });
+    const host = page.locator('[data-fovilo-watch]');
+    const cinema = host.getByRole('button', { name: 'Cinema', exact: true });
+    const stage = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #primary-inner > #player');
+    const recommendations = page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #secondary-inner > #related');
+    const media = page.locator('#movie_player video.html5-main-video');
+    await cinema.waitFor();
+    await waitForPlayableVideo(page);
+    const hadRecommendations = await recommendations.isVisible();
+    const shadow = () => stage.evaluate((element) => getComputedStyle(element).boxShadow);
+    const nativeShadow = await shadow();
+    const inlineStage = await stage.elementHandle();
+    const stageBounds = await stage.boundingBox();
+    const original = await media.elementHandle();
+    await cinema.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await cinema.getAttribute('aria-pressed'), 'true');
+    if (hadRecommendations) await recommendations.waitFor({ state: 'hidden' });
+    assert.notEqual(await shadow(), nativeShadow);
+    const cinemaBounds = await stage.boundingBox();
+    assert.equal(cinemaBounds.width, stageBounds.width);
+    assert.equal(cinemaBounds.height, stageBounds.height);
+    assert.equal(await media.evaluate((video, original) => video === original, original), true);
+    await toggleFullscreen(page, true);
+    assert.equal(await inlineStage.evaluate((element, originalShadow) =>
+      !element.isConnected || getComputedStyle(element).boxShadow === originalShadow, nativeShadow), true);
+    await toggleFullscreen(page, false);
+    assert.notEqual(await shadow(), nativeShadow);
+    await cinema.click();
+    if (hadRecommendations) await recommendations.waitFor();
+    assert.equal(await shadow(), nativeShadow);
+    t.diagnostic('Cinema preserved video identity and size, suspended its matte in fullscreen, and restored Everyday on exit');
   }),
 );
 
@@ -195,6 +237,7 @@ test('playlist handoffs and native captions preserve Watch controls', { timeout:
     await host.waitFor();
     await assertTimeLink(videoId, 4);
     assert.equal(await host.getByRole('button', { name: 'Focus', exact: true }).count(), 0);
+    assert.equal(await host.getByRole('button', { name: 'Cinema', exact: true }).count(), 0);
 
     const episode = page.locator('ytd-playlist-panel-video-renderer a[href*="/watch?v=' + sintel + '"]').first();
     await episode.click();

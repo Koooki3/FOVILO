@@ -55,8 +55,10 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
         <!doctype html><title>YouTube fixture</title>
         <style>#title h1 { font-weight: 500; } #channel-name a { font-weight: 400; } #info { font-weight: 500; }</style>
         <ytd-watch-flexy video-id="${first}">
-          <div id="movie_player"><video class="html5-main-video" controls
-            src="${audioFixture()}"></video></div>
+          <div id="primary-inner"><div id="player">
+            <div id="movie_player"><video class="html5-main-video" controls
+              src="${audioFixture()}"></video></div>
+          </div></div>
           <div id="above-the-fold">
             <div id="title"><h1>Native title</h1></div>
             <div id="owner"><div id="channel-name"><a href="#native">Native action</a></div></div>
@@ -112,7 +114,10 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.evaluate(() => { window.nativeVideo.currentTime = 2; });
 
     const focus = page.getByRole('button', { name: 'Focus', exact: true });
+    const cinema = page.getByRole('button', { name: 'Cinema', exact: true });
     const recommendations = page.locator('#secondary-inner > #related');
+    const stage = page.locator('#primary-inner > #player');
+    const matte = () => stage.evaluate((element) => getComputedStyle(element).boxShadow);
     const nativePlaylist = page.locator('#playlist');
     await focus.focus();
     await page.keyboard.press('Space');
@@ -126,19 +131,39 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await focus.getAttribute('aria-pressed'), 'false');
     await focus.click();
     await recommendations.waitFor({ state: 'hidden' });
+    const originalStage = await stage.boundingBox();
+    assert.equal(await matte(), 'none');
+    await cinema.click();
+    assert.equal(await focus.getAttribute('aria-pressed'), 'false');
+    assert.equal(await cinema.getAttribute('aria-pressed'), 'true');
+    assert.notEqual(await matte(), 'none');
+    assert.deepEqual(await stage.boundingBox(), originalStage);
+    assert.equal(await nativePlaylist.isVisible(), true);
+    await page.locator('ytd-watch-flexy').evaluate((root) => root.setAttribute('theater', ''));
+    assert.equal(await matte(), 'none');
+    await page.locator('ytd-watch-flexy').evaluate((root) => root.removeAttribute('theater'));
+    assert.notEqual(await matte(), 'none');
+    await cinema.click();
+    await recommendations.waitFor();
+    assert.equal(await matte(), 'none');
+    await cinema.click();
 
     await page.evaluate((path) => history.pushState(null, '', path), watch(first) + '&list=fixture');
     await recommendations.waitFor();
     assert.equal(await focus.count(), 0);
+    assert.equal(await cinema.count(), 0);
+    assert.equal(await matte(), 'none');
     await page.evaluate(() => history.back());
     await focus.waitFor();
     assert.equal(await focus.getAttribute('aria-pressed'), 'false');
-    await focus.click();
+    assert.equal(await cinema.getAttribute('aria-pressed'), 'false');
+    await cinema.click();
     await recommendations.waitFor({ state: 'hidden' });
 
     await page.evaluate((path) => history.pushState(null, '', path), watch(second));
     await page.locator(host).waitFor({ state: 'detached' });
     await recommendations.waitFor();
+    assert.equal(await matte(), 'none');
     await page.evaluate((id) => {
       document.querySelector('ytd-watch-flexy').setAttribute('video-id', id);
       for (let index = 0; index < 20; index += 1) {
@@ -179,11 +204,12 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.locator(host).count(), 1);
 
     await page.getByRole('textbox', { name: 'Native comment' }).fill('Keep this draft');
-    await focus.click();
+    await cinema.click();
     await recommendations.waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'Return to YouTube' }).click();
     await page.locator(host).waitFor({ state: 'detached' });
     await recommendations.waitFor();
+    assert.equal(await matte(), 'none');
     assert.deepEqual(await page.evaluate(() => ({
       video: document.querySelector('video') === window.nativeVideo,
       title: document.querySelector('h1') === window.nativeTitle,

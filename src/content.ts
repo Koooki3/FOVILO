@@ -1,10 +1,10 @@
 import { observeSettings, writeSetting } from './settings.ts';
 import { timeLink, watchId } from './watch.ts';
-import { recommendationsSelector, watchStyles } from './watch-style.ts';
+import { cinemaStageSelector, recommendationsSelector, watchStyles } from './watch-style.ts';
 
 const ownedSelector = '[data-fovilo-watch]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
-type Mounted = { id: string; anchor: Element; host: HTMLElement; focusAvailable: boolean; dispose: () => void };
+type Mounted = { id: string; anchor: Element; host: HTMLElement; modesAvailable: boolean; dispose: () => void };
 let mounted: Mounted | undefined;
 let enabled = false;
 let failed = false;
@@ -64,12 +64,12 @@ function currentMedia(root: Element, id: string) {
   return element;
 }
 
-function mount(id: string, anchor: Element, focusAvailable: boolean): Mounted {
+function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
   const scope = new AbortController();
   const { signal } = scope;
   const host = document.createElement('div');
   host.dataset.foviloWatch = '';
-  host.toggleAttribute('data-fovilo-focus-available', focusAvailable);
+  host.toggleAttribute('data-fovilo-modes-available', modesAvailable);
   const pageStyles = document.createElement('style');
   pageStyles.textContent = watchStyles;
   host.append(pageStyles);
@@ -84,8 +84,9 @@ function mount(id: string, anchor: Element, focusAvailable: boolean): Mounted {
       border: 1px solid GrayText; border-radius: 8px; padding: 8px; }
     input { box-sizing: border-box; max-inline-size: 100%; }
     button:focus-visible, input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
-    [data-focus-toggle] { display: var(--fovilo-focus-display, none); }
-    [data-focus-toggle][aria-pressed=true] {
+    [data-watch-mode=focus] { display: var(--fovilo-focus-display, none); }
+    [data-watch-mode=cinema] { display: var(--fovilo-cinema-display, none); }
+    [data-watch-mode][aria-pressed=true] {
       background: Highlight; color: HighlightText; border-color: Highlight;
     }
     strong { margin-inline-end: auto; }
@@ -101,10 +102,16 @@ function mount(id: string, anchor: Element, focusAvailable: boolean): Mounted {
   label.textContent = 'FOVILO';
   const time = document.createElement('button');
   time.textContent = 'Copy time link';
-  const focus = document.createElement('button');
-  focus.textContent = 'Focus';
-  focus.dataset.focusToggle = '';
-  focus.setAttribute('aria-pressed', 'false');
+  const modes = [
+    { name: 'focus', label: 'Focus', selector: recommendationsSelector, feedback: 'Recommendations hidden.' },
+    { name: 'cinema', label: 'Cinema', selector: cinemaStageSelector + ':has(#movie_player)', feedback: 'Cinema enabled.' },
+  ].map((mode) => {
+    const button = document.createElement('button');
+    button.textContent = mode.label;
+    button.dataset.watchMode = mode.name;
+    button.setAttribute('aria-pressed', 'false');
+    return { ...mode, button };
+  });
   const restore = document.createElement('button');
   restore.textContent = 'Return to YouTube';
   let returning = false;
@@ -126,18 +133,21 @@ function mount(id: string, anchor: Element, focusAvailable: boolean): Mounted {
   function current() {
     const url = new URL(location.href);
     return !signal.aborted && host.isConnected && watchId(url) === id &&
-      focusAvailable === !url.searchParams.has('list') &&
+      modesAvailable === !url.searchParams.has('list') &&
       watchRoot(id)?.contains(anchor);
   }
 
-  focus.addEventListener('click', (event) => {
-    if (!event.isTrusted || !focusAvailable || !current()) return;
-    const root = watchRoot(id);
-    if (!root || root.hasAttribute('is-live') || !unique(root, recommendationsSelector)) return;
-    const active = host.toggleAttribute('data-fovilo-focus');
-    focus.setAttribute('aria-pressed', String(active));
-    status.textContent = active ? 'Recommendations hidden.' : 'Recommendations restored.';
-  }, { signal });
+  for (const mode of modes) {
+    mode.button.addEventListener('click', (event) => {
+      if (!event.isTrusted || !modesAvailable || !current()) return;
+      const root = watchRoot(id);
+      if (!root || root.hasAttribute('is-live') || !unique(root, mode.selector)) return;
+      const next = host.dataset.foviloMode === mode.name ? 'everyday' : mode.name;
+      host.dataset.foviloMode = next;
+      for (const control of modes) control.button.setAttribute('aria-pressed', String(control.name === next));
+      status.textContent = next === 'everyday' ? 'Everyday restored.' : mode.feedback;
+    }, { signal });
+  }
 
   time.addEventListener('click', async (event) => {
     if (!event.isTrusted || time.hasAttribute('aria-disabled') || !current()) return;
@@ -183,14 +193,14 @@ function mount(id: string, anchor: Element, focusAvailable: boolean): Mounted {
     }
   }, { signal });
 
-  panel.append(label, time, focus, restore, status, link);
+  panel.append(label, time, ...modes.map((mode) => mode.button), restore, status, link);
   shadow.append(styles, panel);
   anchor.append(host);
   return {
     id,
     anchor,
     host,
-    focusAvailable,
+    modesAvailable,
     dispose() {
       if (returning && document.activeElement === host && current()) {
         const target = anchor.querySelector('h1') ?? anchor;
@@ -226,9 +236,9 @@ function reconcile(allowRetry: boolean) {
   observeRoot(root);
   if (root) currentMedia(root, id);
   const anchor = root && unique(root, '#above-the-fold');
-  const focusAvailable = !url.searchParams.has('list');
+  const modesAvailable = !url.searchParams.has('list');
   if (mounted && (mounted.id !== id || mounted.anchor !== anchor ||
-      mounted.host.parentElement !== anchor || mounted.focusAvailable !== focusAvailable)) dispose();
+      mounted.host.parentElement !== anchor || mounted.modesAvailable !== modesAvailable)) dispose();
   if (!anchor) {
     if (!root && allowRetry) {
       const container = document.querySelector('ytd-page-manager') ?? document.body;
@@ -242,7 +252,7 @@ function reconcile(allowRetry: boolean) {
   }
   if (mounted || anchor.querySelector(ownedSelector)) return;
   try {
-    mounted = mount(id, anchor, focusAvailable);
+    mounted = mount(id, anchor, modesAvailable);
   } catch {
     failed = true;
     observeRoot(undefined);
