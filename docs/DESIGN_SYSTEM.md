@@ -19,3 +19,7 @@ Cinema adds a dark matte around the existing inline player and hides the same re
 ## Context Rail on Watch
 
 The inline rail groups time links and viewing modes behind a **Watch controls** disclosure. It starts expanded and preserves the user's choice across navigation in the same YouTube document. The controls wrap in narrow layouts. When collapsed, the disclosure names an active Focus or Cinema mode and **Return to YouTube** remains available. The disclosure has an explicit expanded state and removes hidden actions from the keyboard sequence. The rail stays in the metadata flow below the player.
+
+## Context Rail on Search
+
+The same rail sits at the start of the primary results column. Compact density reduces the spacing before regular video results to 8 px and limits wide thumbnails to 360 px at viewports of at least 1000 CSS px. The Search controls leave native filters, cards and result links in place. Density and disclosure choices last within the current YouTube document. Disabling Search removes the rail and its scoped stylesheet.

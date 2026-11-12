@@ -53,7 +53,9 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
       const headers = request === origin + blockedWatch ? { 'Permissions-Policy': 'clipboard-write=()' } : {};
       return route.fulfill({ contentType: 'text/html', headers, body: `
         <!doctype html><title>YouTube fixture</title>
-        <style>#title h1 { font-weight: 500; } #channel-name a { font-weight: 400; } #info { font-weight: 500; }</style>
+        <style>#title h1 { font-weight: 500; } #channel-name a { font-weight: 400; }
+          #info { font-weight: 500; } ytd-video-renderer { display: block; margin-block-start: 16px; }</style>
+        <ytd-masthead><input name="search_query" aria-label="Native search"></ytd-masthead>
         <ytd-watch-flexy video-id="${first}">
           <div id="primary-inner"><div id="player">
             <div id="movie_player"><video class="html5-main-video" controls
@@ -69,7 +71,13 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
             <div id="playlist">Native playlist panel</div>
             <div id="related"><a href="#next">Native recommendation</a></div>
           </div>
-        </ytd-watch-flexy>` });
+        </ytd-watch-flexy>
+        <ytd-search><div id="primary">
+          <button>Native filters</button>
+          <ytd-item-section-renderer><div id="contents"><ytd-video-renderer>
+            <a href="${watch(first)}">Native search result</a>
+          </ytd-video-renderer></div></ytd-item-section-renderer>
+        </div></ytd-search>` });
     });
 
     const page = context.pages()[0];
@@ -259,6 +267,41 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await watchToggle.check();
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+
+    const searchToggle = manager.getByRole('checkbox', { name: 'Search controls' });
+    const searchHost = page.locator('[data-fovilo-search]');
+    await page.evaluate(() => history.pushState(null, '', '/results?search_query=fixture'));
+    await searchHost.waitFor();
+    assert.equal(await page.locator(host).count(), 0);
+    const density = searchHost.getByRole('button', { name: 'Compact results' });
+    const result = page.locator('ytd-video-renderer');
+    const spacing = () => result.evaluate((element) => getComputedStyle(element).marginBlockStart);
+    assert.equal(await spacing(), '16px');
+    await density.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await density.getAttribute('aria-pressed'), 'true');
+    assert.equal(await spacing(), '8px');
+    assert.equal(await page.getByRole('button', { name: 'Native filters' }).isVisible(), true);
+    assert.equal(await page.getByRole('link', { name: 'Native search result' }).getAttribute('href'), watch(first));
+    await searchToggle.uncheck();
+    await searchHost.waitFor({ state: 'detached' });
+    assert.equal(await spacing(), '16px');
+    await searchToggle.check();
+    await searchHost.waitFor();
+    assert.equal(await spacing(), '8px');
+    await density.click();
+    assert.equal(await spacing(), '16px');
+    const searchRestore = searchHost.getByRole('button', { name: 'Return to YouTube' });
+    await searchRestore.focus();
+    await page.keyboard.press('Enter');
+    await searchHost.waitFor({ state: 'detached' });
+    assert.equal(await page.getByRole('textbox', { name: 'Native search' }).evaluate((input) =>
+      input === document.activeElement), true);
+    await globalToggle.check();
+    await searchHost.waitFor();
+    await page.evaluate(() => history.back());
+    await searchHost.waitFor({ state: 'detached' });
+    await page.locator(host).waitFor();
 
     await page.evaluate(async (path) => {
       const root = document.querySelector('ytd-watch-flexy');

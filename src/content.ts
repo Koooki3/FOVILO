@@ -1,12 +1,18 @@
 import { observeSettings, writeSetting } from './settings.ts';
 import { timeLink, watchId } from './watch.ts';
 import { cinemaStageSelector, recommendationsSelector, watchStyles } from './watch-style.ts';
+import { createRail } from './rail.ts';
+import { mountSearch } from './search.ts';
 
-const ownedSelector = '[data-fovilo-watch]';
+const ownedSelector = '[data-fovilo-watch], [data-fovilo-search]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
-type Mounted = { id: string; anchor: Element; host: HTMLElement; modesAvailable: boolean; dispose: () => void };
+type Route = { kind: 'watch'; id: string; modesAvailable: boolean } | { kind: 'search' };
+type Surface = { anchor: Element; host: HTMLElement; dispose: () => void };
+type Mounted = Surface & { key: string };
 let mounted: Mounted | undefined;
 let enabled = false;
+let watchEnabled = false;
+let searchEnabled = false;
 let failed = false;
 let pending = false;
 let retry: number | undefined;
@@ -22,8 +28,8 @@ const anchorObserver = new MutationObserver(() => {
 });
 
 const discoveryObserver = new MutationObserver(() => {
-  const id = watchId(new URL(location.href));
-  if (id && watchRoot(id)) schedule();
+  const route = currentRoute();
+  if (route && routeRoot(route)) schedule();
 });
 
 function observeRoot(root: Element | undefined) {
@@ -56,6 +62,20 @@ function watchRoot(id: string) {
   return unique(document, 'ytd-watch-flexy:not([hidden])[video-id="' + id + '"]');
 }
 
+function currentRoute(): Route | undefined {
+  if (!enabled || failed) return;
+  const url = new URL(location.href);
+  const id = watchEnabled ? watchId(url) : null;
+  if (id) return { kind: 'watch', id, modesAvailable: !url.searchParams.has('list') };
+  if (searchEnabled && url.origin === 'https://www.youtube.com' && url.pathname === '/results') {
+    return { kind: 'search' };
+  }
+}
+
+function routeRoot(route: Route) {
+  return route.kind === 'watch' ? watchRoot(route.id) : unique(document, 'ytd-search:not([hidden])');
+}
+
 function currentMedia(root: Element, id: string) {
   const element = unique<HTMLVideoElement>(root, '#movie_player video.html5-main-video');
   if (!element || !element.currentSrc || element.readyState === 0) return;
@@ -65,63 +85,15 @@ function currentMedia(root: Element, id: string) {
   return element;
 }
 
-function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
+function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surface {
   const scope = new AbortController();
   const { signal } = scope;
-  const host = document.createElement('div');
-  host.dataset.foviloWatch = '';
+  const { host, shadow, panel, toggle, actions, restore, status, setExpanded } =
+    createRail('watch', railExpanded, signal);
   host.toggleAttribute('data-fovilo-modes-available', modesAvailable);
   const pageStyles = document.createElement('style');
   pageStyles.textContent = watchStyles;
   host.append(pageStyles);
-  const shadow = host.attachShadow({ mode: 'open' });
-  const styles = document.createElement('style');
-  styles.textContent = `
-    :host { display: block; margin-block: 12px; color-scheme: light dark; }
-    section { display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-      padding: 10px; border: 1px solid GrayText; border-radius: 12px;
-      background: Canvas; color: CanvasText; font: 14px system-ui; }
-    button, input { font: inherit; color: CanvasText; background: Canvas;
-      border: 1px solid GrayText; border-radius: 8px; padding: 8px; }
-    input { box-sizing: border-box; max-inline-size: 100%; }
-    button:focus-visible, input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
-    .rail-heading, .rail-actions {
-      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-      min-inline-size: 0; max-inline-size: 100%;
-    }
-    .rail-heading { margin-inline-end: auto; }
-    .rail-actions[hidden] { display: none; }
-    [aria-controls=fovilo-watch-actions]::after {
-      content: ''; display: inline-block; inline-size: 5px; block-size: 5px;
-      margin-inline-start: 8px; vertical-align: 0.17em;
-      border-inline-end: 1px solid currentColor; border-block-end: 1px solid currentColor;
-      transform: rotate(45deg);
-    }
-    [aria-controls=fovilo-watch-actions][aria-expanded=true]::after { transform: rotate(225deg); }
-    [data-watch-mode=focus] { display: var(--fovilo-focus-display, none); }
-    [data-watch-mode=cinema] { display: var(--fovilo-cinema-display, none); }
-    [data-watch-mode][aria-pressed=true] {
-      background: Highlight; color: HighlightText; border-color: Highlight;
-    }
-    [role=status] { flex-basis: 100%; }
-    [role=status]:empty {
-      position: absolute; inline-size: 1px; block-size: 1px;
-      overflow: hidden; clip-path: inset(50%);
-    }
-  `;
-  const panel = document.createElement('section');
-  panel.setAttribute('aria-label', 'FOVILO Watch controls');
-  const label = document.createElement('strong');
-  label.textContent = 'FOVILO';
-  const heading = document.createElement('div');
-  heading.className = 'rail-heading';
-  const toggle = document.createElement('button');
-  toggle.textContent = 'Watch controls';
-  toggle.setAttribute('aria-controls', 'fovilo-watch-actions');
-  heading.append(label, toggle);
-  const actions = document.createElement('div');
-  actions.className = 'rail-actions';
-  actions.id = 'fovilo-watch-actions';
   const time = document.createElement('button');
   time.textContent = 'Copy time link';
   const modes = [
@@ -134,23 +106,11 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
     button.setAttribute('aria-pressed', 'false');
     return { ...mode, button };
   });
-  const restore = document.createElement('button');
-  restore.textContent = 'Return to YouTube';
   let returning = false;
-  const status = document.createElement('span');
-  status.setAttribute('role', 'status');
   const link = document.createElement('input');
   link.readOnly = true;
   link.hidden = true;
   link.setAttribute('aria-label', 'Time link for manual copying');
-
-  function keepButtonActivation(event: KeyboardEvent) {
-    if (event.target instanceof HTMLButtonElement && (event.key === ' ' || event.key === 'Enter')) {
-      event.stopPropagation();
-    }
-  }
-  panel.addEventListener('keydown', keepButtonActivation, { signal });
-  panel.addEventListener('keyup', keepButtonActivation, { signal });
 
   function current() {
     const url = new URL(location.href);
@@ -159,19 +119,11 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
       watchRoot(id)?.contains(anchor);
   }
 
-  function syncRail() {
-    toggle.setAttribute('aria-expanded', String(railExpanded));
-    actions.hidden = !railExpanded;
-  }
-  syncRail();
   toggle.addEventListener('click', (event) => {
     if (!event.isTrusted || !current()) return;
     railExpanded = !railExpanded;
-    syncRail();
-    if (!railExpanded) {
-      status.textContent = '';
-      link.hidden = true;
-    }
+    setExpanded(railExpanded);
+    if (!railExpanded) link.hidden = true;
   }, { signal });
 
   for (const mode of modes) {
@@ -232,14 +184,11 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
   }, { signal });
 
   actions.append(time, ...modes.map((mode) => mode.button));
-  panel.append(heading, actions, restore, status, link);
-  shadow.append(styles, panel);
+  panel.append(link);
   anchor.append(host);
   return {
-    id,
     anchor,
     host,
-    modesAvailable,
     dispose() {
       if (returning && document.activeElement === host && current()) {
         const target = anchor.querySelector('h1') ?? anchor;
@@ -263,25 +212,26 @@ function mount(id: string, anchor: Element, modesAvailable: boolean): Mounted {
 }
 
 function reconcile(allowRetry: boolean) {
-  const url = new URL(location.href);
-  const id = enabled && !failed ? watchId(url) : null;
-  if (!id) {
+  const route = currentRoute();
+  if (!route) {
     observeRoot(undefined);
     dispose();
     return;
   }
 
-  const root = watchRoot(id);
+  const root = routeRoot(route);
   observeRoot(root);
-  if (root) currentMedia(root, id);
-  const anchor = root && unique(root, '#above-the-fold');
-  const modesAvailable = !url.searchParams.has('list');
-  if (mounted && (mounted.id !== id || mounted.anchor !== anchor ||
-      mounted.host.parentElement !== anchor || mounted.modesAvailable !== modesAvailable)) dispose();
+  if (root && route.kind === 'watch') currentMedia(root, route.id);
+  const anchor = root && unique(root, route.kind === 'watch' ? '#above-the-fold' : '#primary');
+  const key = route.kind === 'watch' ? route.id + ':' + route.modesAvailable : 'search';
+  if (mounted && (mounted.key !== key || mounted.anchor !== anchor ||
+      mounted.host.parentElement !== anchor)) dispose();
   if (!anchor) {
     if (!root && allowRetry) {
       const container = document.querySelector('ytd-page-manager') ?? document.body;
-      discoveryObserver.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['video-id'] });
+      discoveryObserver.observe(container, {
+        childList: true, subtree: true, attributes: true, attributeFilter: ['video-id', 'hidden'],
+      });
       retry = window.setTimeout(() => {
         clearRetry();
         reconcile(false);
@@ -291,7 +241,10 @@ function reconcile(allowRetry: boolean) {
   }
   if (mounted || anchor.querySelector(ownedSelector)) return;
   try {
-    mounted = mount(id, anchor, modesAvailable);
+    const surface = route.kind === 'watch'
+      ? mountWatch(route.id, anchor, route.modesAvailable)
+      : mountSearch(anchor);
+    mounted = { key, ...surface };
   } catch {
     failed = true;
     observeRoot(undefined);
@@ -320,10 +273,13 @@ function updateRoutes(on: boolean) {
 }
 
 observeSettings((settings) => {
-  const next = settings?.enabled === true && settings.watchEnabled;
-  if (next === enabled) return;
-  enabled = next;
-  updateRoutes(enabled);
+  watchEnabled = settings?.watchEnabled === true;
+  searchEnabled = settings?.searchEnabled === true;
+  const next = settings?.enabled === true && (watchEnabled || searchEnabled);
+  if (next !== enabled) {
+    enabled = next;
+    updateRoutes(enabled);
+  }
   if (enabled) schedule();
   else {
     clearRetry();

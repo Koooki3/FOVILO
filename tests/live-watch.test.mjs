@@ -52,12 +52,14 @@ async function withLivePage(run) {
 test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000 }, (t) =>
   withLivePage(async (page, context) => {
     const host = page.locator('[data-fovilo-watch]');
+    const searchRail = page.locator('[data-fovilo-search]');
     const search = page.locator('input[name="search_query"]').first();
     async function runSearch() {
       await search.fill(query);
       await search.press('Enter');
       await page.waitForURL((url) => url.pathname === '/results' && url.searchParams.get('search_query') === query);
       await host.waitFor({ state: 'detached' });
+      await searchRail.waitFor();
     }
 
     const response = await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
@@ -66,10 +68,22 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     assert.equal(await host.count(), 0);
     t.diagnostic('Home loaded without a Watch control');
     await runSearch();
+    const density = searchRail.getByRole('button', { name: 'Compact results' });
+    const resultRow = page.locator('ytd-search #primary ytd-item-section-renderer > #contents > ytd-video-renderer').first();
+    const spacing = () => resultRow.evaluate((element) => getComputedStyle(element).marginBlockStart);
+    const nativeSpacing = await spacing();
+    const thumbnail = resultRow.locator('#dismissible > ytd-thumbnail');
+    await density.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await density.getAttribute('aria-pressed'), 'true');
+    assert.equal(await spacing(), '8px');
+    assert.equal(await thumbnail.evaluate((element) => getComputedStyle(element).maxInlineSize), '360px');
+    await page.waitForFunction(() => document.querySelectorAll('[data-fovilo-search]').length === 1);
     const result = page.locator('a[href*="/watch?v=' + videoId + '"]:visible').first();
     await result.click();
     await page.waitForURL((url) => url.pathname === '/watch' && url.searchParams.get('v') === videoId);
     await host.waitFor();
+    await searchRail.waitFor({ state: 'detached' });
     assert.equal(await host.count(), 1);
     const rail = host.getByRole('button', { name: /^Watch controls/ });
     await rail.focus();
@@ -79,6 +93,11 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     t.diagnostic('Search result opened with one Watch control');
 
     await runSearch();
+    assert.equal(await density.getAttribute('aria-pressed'), 'true');
+    await density.click();
+    assert.equal(await density.getAttribute('aria-pressed'), 'false');
+    assert.equal(await spacing(), nativeSpacing);
+    t.diagnostic('Search density changed and restored native results, persisted within the session, and left native navigation working');
     await page.goBack({ waitUntil: 'commit' });
     await host.waitFor();
     assert.equal(await host.count(), 1);

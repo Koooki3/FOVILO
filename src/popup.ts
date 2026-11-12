@@ -3,6 +3,7 @@ import { observeSettings, writeSetting, type Setting } from './settings.ts';
 const controls = {
   enabled: document.querySelector<HTMLInputElement>('#enabled')!,
   watchEnabled: document.querySelector<HTMLInputElement>('#watchEnabled')!,
+  searchEnabled: document.querySelector<HTMLInputElement>('#searchEnabled')!,
 };
 const status = document.querySelector<HTMLElement>('[role=status]')!;
 const stop = observeSettings((settings) => {

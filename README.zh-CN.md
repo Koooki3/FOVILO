@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。首个播放页控件可以复制当前时间链接。点击 **Return to YouTube** 会移除控件并保存全局关闭状态。扩展弹窗可重新启用，也可单独关闭播放页控件。
+FOVILO 是面向桌面 YouTube 的实验性 Chromium 扩展。点击 **Return to YouTube** 会恢复原生布局并保存全局关闭状态。扩展弹窗可重新启用 FOVILO，也可分别控制播放页和搜索页功能。
 
 Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据的视觉层级，控件跟随 YouTube 的浅色或深色主题。
 
@@ -11,6 +11,8 @@ Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据�
 按 **Cinema** 可收起推荐，并为页面内的播放器加上暗色衬底。Focus 和 Cinema 只能启用一个，再按当前模式即可回到 Everyday。
 
 按 **Watch controls** 可折叠或展开上下文栏。在同一个 YouTube 页面会话内切换视频时，栏的状态会保留。两种状态下都可以使用 **Return to YouTube**。
+
+在搜索页，**Compact results** 可缩小普通视频结果之间的间距，并在宽屏上缩窄缩略图。再按一次恢复标准布局，搜索页的上下文栏也可折叠。
 
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)
 
@@ -22,7 +24,7 @@ Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据�
 2. 打开 `chrome://extensions`，启用开发者模式，选择 **加载已解压的扩展程序**，选中生成的 `dist` 文件夹。
 3. 刷新已打开的桌面 YouTube 标签页，再进入普通视频。识别到兼容布局时，控件显示在播放器下方。
 
-扩展只在本地保存两项设置，内容脚本运行于 `https://www.youtube.com/*`。复制链接由用户主动触发。构建产物无遥测或扩展后端服务。
+扩展只在本地保存全局、播放页和搜索页开关，内容脚本运行于 `https://www.youtube.com/*`。复制链接由用户主动触发。构建产物无遥测或扩展后端服务。
 
 浏览器拒绝访问剪贴板时，FOVILO 会显示可选中的链接。关闭播放页控件时，如果键盘焦点仍在 FOVILO 内，焦点会回到 YouTube 原生视频标题。
 
