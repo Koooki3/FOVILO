@@ -13,7 +13,7 @@ declare const chrome: {
   };
 };
 
-const keys = ['enabled', 'watchEnabled', 'searchEnabled'] as const;
+const keys = ['enabled', 'watchEnabled', 'searchEnabled', 'homeEnabled'] as const;
 export type Setting = typeof keys[number];
 type Settings = Record<Setting, boolean>;
 
@@ -22,7 +22,7 @@ export function writeSetting(key: Setting, value: boolean) {
 }
 
 export function observeSettings(onUpdate: (value: Settings | null) => void) {
-  const values: Settings = { enabled: true, watchEnabled: true, searchEnabled: true };
+  const values: Settings = { enabled: true, watchEnabled: true, searchEnabled: true, homeEnabled: true };
   const changed = new Set<Setting>();
   let ready = false;
   let active = true;

@@ -53,20 +53,23 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
   withLivePage(async (page, context) => {
     const host = page.locator('[data-fovilo-watch]');
     const searchRail = page.locator('[data-fovilo-search]');
+    const homeRail = page.locator('[data-fovilo-home]');
     const search = page.locator('input[name="search_query"]').first();
     async function runSearch() {
       await search.fill(query);
       await search.press('Enter');
       await page.waitForURL((url) => url.pathname === '/results' && url.searchParams.get('search_query') === query);
       await host.waitFor({ state: 'detached' });
+      await homeRail.waitFor({ state: 'detached' });
       await searchRail.waitFor();
     }
 
-    const response = await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    const response = await page.goto(origin + '/', { waitUntil: 'commit' });
     assert.equal(response?.status(), 200);
     await search.waitFor();
+    await homeRail.waitFor();
     assert.equal(await host.count(), 0);
-    t.diagnostic('Home loaded without a Watch control');
+    t.diagnostic('Home loaded one Home rail and no Watch control');
     await runSearch();
     const density = searchRail.getByRole('button', { name: 'Compact results' });
     const resultRow = page.locator('ytd-search #primary ytd-item-section-renderer > #contents > ytd-video-renderer').first();
@@ -194,6 +197,27 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     });
     assert.equal(await host.count(), 0);
     t.diagnostic('Global off persisted after reloading the live Watch page');
+  }),
+);
+
+test('Home rail leads to native Subscriptions and leaves the destination alone', { timeout: 60_000 }, (t) =>
+  withLivePage(async (page) => {
+    const response = await page.goto(origin + '/', { waitUntil: 'commit' });
+    assert.equal(response?.status(), 200);
+    const rail = page.locator('[data-fovilo-home]');
+    const toggle = rail.getByRole('button', { name: 'Home controls' });
+    const link = rail.getByRole('link', { name: 'Subscriptions' });
+    await toggle.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
+    assert.equal(await link.count(), 0);
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    assert.equal(await link.evaluate((anchor) => anchor.getRootNode().activeElement === anchor), true);
+    await page.keyboard.press('Enter');
+    await page.waitForURL((url) => url.origin === origin && url.pathname === '/feed/subscriptions');
+    await rail.waitFor({ state: 'detached' });
+    t.diagnostic('Keyboard navigation followed the native Subscriptions link and removed the Home rail');
   }),
 );
 

@@ -3,16 +3,19 @@ import { timeLink, watchId } from './watch.ts';
 import { cinemaStageSelector, recommendationsSelector, watchStyles } from './watch-style.ts';
 import { createRail } from './rail.ts';
 import { mountSearch } from './search.ts';
+import { mountHome } from './home.ts';
+import { browseRootSelector } from './browse-rail.ts';
 
-const ownedSelector = '[data-fovilo-watch], [data-fovilo-search]';
+const ownedSelector = '[data-fovilo-watch], [data-fovilo-search], [data-fovilo-home]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
-type Route = { kind: 'watch'; id: string; modesAvailable: boolean } | { kind: 'search' };
+type Route = { kind: 'watch'; id: string; modesAvailable: boolean } | { kind: 'search' | 'home' };
 type Surface = { anchor: Element; host: HTMLElement; dispose: () => void };
 type Mounted = Surface & { key: string };
 let mounted: Mounted | undefined;
 let enabled = false;
 let watchEnabled = false;
 let searchEnabled = false;
+let homeEnabled = false;
 let failed = false;
 let pending = false;
 let retry: number | undefined;
@@ -67,13 +70,13 @@ function currentRoute(): Route | undefined {
   const url = new URL(location.href);
   const id = watchEnabled ? watchId(url) : null;
   if (id) return { kind: 'watch', id, modesAvailable: !url.searchParams.has('list') };
-  if (searchEnabled && url.origin === 'https://www.youtube.com' && url.pathname === '/results') {
-    return { kind: 'search' };
-  }
+  if (url.origin !== 'https://www.youtube.com') return;
+  if (searchEnabled && url.pathname === '/results') return { kind: 'search' };
+  if (homeEnabled && url.pathname === '/') return { kind: 'home' };
 }
 
 function routeRoot(route: Route) {
-  return route.kind === 'watch' ? watchRoot(route.id) : unique(document, 'ytd-search:not([hidden])');
+  return route.kind === 'watch' ? watchRoot(route.id) : unique(document, browseRootSelector(route.kind));
 }
 
 function currentMedia(root: Element, id: string) {
@@ -223,14 +226,14 @@ function reconcile(allowRetry: boolean) {
   observeRoot(root);
   if (root && route.kind === 'watch') currentMedia(root, route.id);
   const anchor = root && unique(root, route.kind === 'watch' ? '#above-the-fold' : '#primary');
-  const key = route.kind === 'watch' ? route.id + ':' + route.modesAvailable : 'search';
+  const key = route.kind === 'watch' ? route.id + ':' + route.modesAvailable : route.kind;
   if (mounted && (mounted.key !== key || mounted.anchor !== anchor ||
       mounted.host.parentElement !== anchor)) dispose();
   if (!anchor) {
     if (!root && allowRetry) {
       const container = document.querySelector('ytd-page-manager') ?? document.body;
       discoveryObserver.observe(container, {
-        childList: true, subtree: true, attributes: true, attributeFilter: ['video-id', 'hidden'],
+        childList: true, subtree: true, attributes: true, attributeFilter: ['video-id', 'hidden', 'page-subtype'],
       });
       retry = window.setTimeout(() => {
         clearRetry();
@@ -243,7 +246,7 @@ function reconcile(allowRetry: boolean) {
   try {
     const surface = route.kind === 'watch'
       ? mountWatch(route.id, anchor, route.modesAvailable)
-      : mountSearch(anchor);
+      : route.kind === 'search' ? mountSearch(anchor) : mountHome(anchor);
     mounted = { key, ...surface };
   } catch {
     failed = true;
@@ -275,7 +278,8 @@ function updateRoutes(on: boolean) {
 observeSettings((settings) => {
   watchEnabled = settings?.watchEnabled === true;
   searchEnabled = settings?.searchEnabled === true;
-  const next = settings?.enabled === true && (watchEnabled || searchEnabled);
+  homeEnabled = settings?.homeEnabled === true;
+  const next = settings?.enabled === true && (watchEnabled || searchEnabled || homeEnabled);
   if (next !== enabled) {
     enabled = next;
     updateRoutes(enabled);

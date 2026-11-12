@@ -1,7 +1,7 @@
-type Surface = 'watch' | 'search';
+type Surface = 'watch' | 'search' | 'home';
 
 export function createRail(surface: Surface, expanded: boolean, signal: AbortSignal) {
-  const name = surface === 'watch' ? 'Watch' : 'Search';
+  const name = { watch: 'Watch', search: 'Search', home: 'Home' }[surface];
   const host = document.createElement('div');
   host.setAttribute('data-fovilo-' + surface, '');
   const shadow = host.attachShadow({ mode: 'open' });
@@ -11,10 +11,11 @@ export function createRail(surface: Surface, expanded: boolean, signal: AbortSig
     section { display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
       padding: 10px; border: 1px solid GrayText; border-radius: 12px;
       background: Canvas; color: CanvasText; font: 14px system-ui; }
-    button, input { font: inherit; color: CanvasText; background: Canvas;
+    button, input, a { font: inherit; color: CanvasText; background: Canvas;
       border: 1px solid GrayText; border-radius: 8px; padding: 8px; }
+    a { display: inline-block; text-decoration: none; }
     input { box-sizing: border-box; max-inline-size: 100%; }
-    button:focus-visible, input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+    button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
     .rail-heading, .rail-actions {
       display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
       min-inline-size: 0; max-inline-size: 100%;

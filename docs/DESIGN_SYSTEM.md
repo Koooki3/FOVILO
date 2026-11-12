@@ -23,3 +23,7 @@ The inline rail groups time links and viewing modes behind a **Watch controls** 
 ## Context Rail on Search
 
 The same rail sits at the start of the primary results column. Compact density reduces the spacing before regular video results to 8 px and limits wide thumbnails to 360 px at viewports of at least 1000 CSS px. The Search controls leave native filters, cards and result links in place. Density and disclosure choices last within the current YouTube document. Disabling Search removes the rail and its scoped stylesheet.
+
+## Context Rail on Home
+
+The Home rail appears above the native feed, including the signed-out empty state. It links to YouTube's Subscriptions page with a standard anchor and shares the Search rail's disclosure and recovery behavior. It uses a separate popup switch.

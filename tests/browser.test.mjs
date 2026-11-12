@@ -49,13 +49,16 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await context.route('**/*', (route) => {
       if (route.request().url().startsWith('chrome-extension://')) return route.continue();
       const request = route.request().url();
-      if (![origin + '/', origin + watch(first), origin + blockedWatch].includes(request)) return route.abort();
+      if (![origin + '/', origin + '/feed/subscriptions', origin + watch(first), origin + blockedWatch].includes(request)) return route.abort();
       const headers = request === origin + blockedWatch ? { 'Permissions-Policy': 'clipboard-write=()' } : {};
       return route.fulfill({ contentType: 'text/html', headers, body: `
         <!doctype html><title>YouTube fixture</title>
         <style>#title h1 { font-weight: 500; } #channel-name a { font-weight: 400; }
           #info { font-weight: 500; } ytd-video-renderer { display: block; margin-block-start: 16px; }</style>
         <ytd-masthead><input name="search_query" aria-label="Native search"></ytd-masthead>
+        <ytd-browse page-subtype="home"><div id="primary">
+          <h2>Native empty feed</h2>
+        </div></ytd-browse>
         <ytd-watch-flexy video-id="${first}">
           <div id="primary-inner"><div id="player">
             <div id="movie_player"><video class="html5-main-video" controls
@@ -83,6 +86,24 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     const page = context.pages()[0];
     await page.goto(origin + '/');
     assert.equal(await page.locator(host).count(), 0);
+    const homeRail = page.locator('[data-fovilo-home]');
+    const homeDisclosure = homeRail.getByRole('button', { name: 'Home controls' });
+    const subscriptions = homeRail.getByRole('link', { name: 'Subscriptions' });
+    await homeRail.waitFor();
+    assert.equal(await page.getByRole('heading', { name: 'Native empty feed' }).isVisible(), true);
+    await homeDisclosure.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await homeDisclosure.getAttribute('aria-expanded'), 'false');
+    assert.equal(await subscriptions.count(), 0);
+    assert.equal(await homeRail.getByRole('button', { name: 'Return to YouTube' }).isVisible(), true);
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    assert.equal(await subscriptions.evaluate((link) => link.getRootNode().activeElement === link), true);
+    await page.keyboard.press('Enter');
+    await page.waitForURL(origin + '/feed/subscriptions');
+    assert.equal(await homeRail.count(), 0);
+    await page.goBack();
+    await homeRail.waitFor();
     const hierarchy = () => page.evaluate(() =>
       ['#title h1', '#channel-name a', '#info'].map((selector) =>
         getComputedStyle(document.querySelector(selector)).fontWeight));
@@ -93,6 +114,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
       history.pushState(null, '', path);
     }, watch(first));
     await page.locator(host).waitFor();
+    await homeRail.waitFor({ state: 'detached' });
     assert.deepEqual(await hierarchy(), ['700', '600', '400']);
     const readScheme = () => page.locator(host).evaluate((element) => getComputedStyle(element).colorScheme);
     assert.equal(await readScheme(), 'light');
@@ -267,6 +289,24 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await watchToggle.check();
     await page.locator(host).waitFor();
     assert.equal(await page.locator(host).count(), 1);
+
+    const homeToggle = manager.getByRole('checkbox', { name: 'Home controls' });
+    await page.evaluate(async () => {
+      const home = document.querySelector('ytd-browse[page-subtype="home"]');
+      home.removeAttribute('page-subtype');
+      history.pushState(null, '', '/');
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      home.setAttribute('page-subtype', 'home');
+    });
+    await homeRail.waitFor();
+    await homeToggle.uncheck();
+    await homeRail.waitFor({ state: 'detached' });
+    assert.equal(await page.getByRole('heading', { name: 'Native empty feed' }).isVisible(), true);
+    await homeToggle.check();
+    await homeRail.waitFor();
+    await page.evaluate(() => history.back());
+    await homeRail.waitFor({ state: 'detached' });
+    await page.locator(host).waitFor();
 
     const searchToggle = manager.getByRole('checkbox', { name: 'Search controls' });
     const searchHost = page.locator('[data-fovilo-search]');
