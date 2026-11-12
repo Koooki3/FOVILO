@@ -10,6 +10,7 @@ const second = 'zyxwvutsrqp';
 const watch = (id) => '/watch?v=' + id;
 const host = '[data-fovilo-watch]';
 const blockedWatch = watch(first) + '&clipboard=blocked';
+const executablePath = process.env.FOVILO_CHROMIUM_EXECUTABLE || undefined;
 
 async function politeStatusNodes(cdp) {
   const { nodes } = await cdp.send('Accessibility.getFullAXTree');
@@ -43,7 +44,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
   try {
     const dist = resolve('dist');
     context = await chromium.launchPersistentContext(profile, {
-      channel: 'chromium',
+      channel: 'chromium', executablePath,
       locale: 'en-US',
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
     });
@@ -522,6 +523,20 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.getByRole('link', { name: 'Native action' }).evaluate((link) =>
       link === document.activeElement), true);
     assert.equal(await title.getAttribute('tabindex'), null);
+
+    await globalToggle.check();
+    await page.locator(host).waitFor();
+    const extensionsPage = await context.newPage();
+    await extensionsPage.goto('chrome://extensions/');
+    const installed = extensionsPage.locator('extensions-item').filter({ hasText: 'FOVILO (Development)' });
+    await installed.waitFor({ state: 'attached' });
+    // Uninstall only the extension in this disposable test profile.
+    await manager.evaluate(() => { void chrome.management.uninstallSelf({ showConfirmDialog: false }); });
+    await installed.waitFor({ state: 'detached' });
+    await page.reload();
+    await title.waitFor();
+    assert.equal(await page.locator(host).count(), 0);
+    assert.deepEqual(await hierarchy(), ['500', '400', '500']);
   } finally {
     await context?.close();
     await rm(profile, { recursive: true, force: true });
@@ -536,7 +551,7 @@ test('Simplified Chinese labels and commands remain usable at 200 percent zoom',
   try {
     const dist = resolve('dist');
     context = await chromium.launchPersistentContext(profile, {
-      channel: 'chromium', locale: 'zh-CN', viewport: { width: 640, height: 900 },
+      channel: 'chromium', executablePath, locale: 'zh-CN', viewport: { width: 640, height: 900 },
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
     });
     await context.route(origin + watch(first), (route) => route.fulfill({
@@ -614,7 +629,7 @@ test('English fallback follows native RTL layout and keeps timestamp URLs left-t
   try {
     const dist = resolve('dist');
     context = await chromium.launchPersistentContext(profile, {
-      channel: 'chromium', locale: 'ar-SA', viewport: { width: 640, height: 800 },
+      channel: 'chromium', executablePath, locale: 'ar-SA', viewport: { width: 640, height: 800 },
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
     });
     await context.route(origin + watch(first), (route) => route.fulfill({

@@ -36,6 +36,7 @@ async function withLivePage(run) {
     const dist = resolve('dist');
     context = await chromium.launchPersistentContext(profile, {
       channel: 'chromium',
+      executablePath: process.env.FOVILO_CHROMIUM_EXECUTABLE || undefined,
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
       locale: 'en-US',
       viewport: { width: 1280, height: 800 },
@@ -247,6 +248,30 @@ test('Home rail leads to native Subscriptions and leaves the destination alone',
     await page.waitForURL((url) => url.origin === origin && url.pathname === '/feed/subscriptions');
     await rail.waitFor({ state: 'detached' });
     t.diagnostic('The keyboard command opened native Subscriptions and removed the Home rail');
+  }),
+);
+
+test('uninstall leaves a reloaded live Watch page playable', { timeout: 60_000 }, () =>
+  withLivePage(async (page, context) => {
+    const response = await page.goto(origin + '/watch?v=' + videoId, { waitUntil: 'commit' });
+    assert.equal(response?.status(), 200);
+    const rail = page.locator('[data-fovilo-watch]');
+    await rail.waitFor();
+    const manager = await context.newPage();
+    await manager.goto('chrome://extensions/');
+    const extension = manager.locator('extensions-item').filter({ hasText: 'FOVILO (Development)' });
+    const id = await extension.getAttribute('id');
+    assert.match(id, /^[a-p]{32}$/);
+    const popup = await context.newPage();
+    await popup.goto('chrome-extension://' + id + '/popup.html');
+    // Uninstall only the extension in this disposable test profile.
+    await popup.evaluate(() => { void chrome.management.uninstallSelf({ showConfirmDialog: false }); });
+    await extension.waitFor({ state: 'detached' });
+    await page.bringToFront();
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await waitForPlayableVideo(page);
+    await page.locator('ytd-watch-flexy[video-id="' + videoId + '"] #above-the-fold h1').first().waitFor();
+    assert.equal(await rail.count(), 0);
   }),
 );
 
