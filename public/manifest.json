@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "FOVILO (Development)",
   "version": "0.0.1",
-  "description": "A reversible YouTube Watch enhancement.",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "minimum_chrome_version": "120",
   "permissions": [
     "storage"
@@ -15,7 +16,7 @@
   },
   "commands": {
     "open-commands": {
-      "description": "Open FOVILO Commands"
+      "description": "__MSG_shortcutDescription__"
     }
   },
   "content_scripts": [

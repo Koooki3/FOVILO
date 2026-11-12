@@ -1,3 +1,5 @@
+import { t } from './i18n.ts';
+
 export type Command = {
   id: string;
   label: string;
@@ -36,7 +38,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
     .recent-commands h3 { margin: 0 0 6px; font-size: 0.92em; }
   `;
   const trigger = document.createElement('button');
-  trigger.textContent = 'Commands';
+  trigger.textContent = t('commands');
   trigger.setAttribute('aria-haspopup', 'dialog');
   const dialog = document.createElement('dialog');
   dialog.setAttribute('aria-labelledby', 'fovilo-commands-title');
@@ -44,12 +46,12 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   heading.className = 'command-heading';
   const title = document.createElement('h2');
   title.id = 'fovilo-commands-title';
-  title.textContent = 'Commands';
+  title.textContent = t('commands');
   const closeButton = document.createElement('button');
-  closeButton.textContent = 'Close';
+  closeButton.textContent = t('close');
   heading.append(title, closeButton);
   const label = document.createElement('label');
-  label.textContent = 'Find a command';
+  label.textContent = t('findCommand');
   const search = document.createElement('input');
   search.type = 'search';
   label.append(search);
@@ -57,7 +59,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
   recent.className = 'recent-commands';
   const recentHeading = document.createElement('h3');
   recentHeading.id = 'fovilo-recent-commands';
-  recentHeading.textContent = 'Recent commands';
+  recentHeading.textContent = t('recentCommands');
   const recentResults = document.createElement('ul');
   recentResults.setAttribute('aria-labelledby', recentHeading.id);
   recent.append(recentHeading, recentResults);
@@ -101,7 +103,7 @@ export function createCommands(shadow: ShadowRoot, commands: Command[], signal: 
     }
     recent.hidden = !recentResults.querySelector('li:not([hidden])');
     results.hidden = !results.querySelector('li:not([hidden])');
-    empty.textContent = recent.hidden && results.hidden ? 'No matching commands.' : '';
+    empty.textContent = recent.hidden && results.hidden ? t('noMatchingCommands') : '';
   }
 
   function open(fromShortcut = false) {

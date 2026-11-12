@@ -1,0 +1,131 @@
+{
+  "extensionDescription": {
+    "message": "为 YouTube 首页、搜索页和播放页提供可撤销的控件。"
+  },
+  "shortcutDescription": {
+    "message": "打开 FOVILO 命令面板"
+  },
+  "enableFovilo": {
+    "message": "启用 FOVILO"
+  },
+  "watchControls": {
+    "message": "播放页控件"
+  },
+  "homeControls": {
+    "message": "首页控件"
+  },
+  "searchControls": {
+    "message": "搜索页控件"
+  },
+  "watchRegion": {
+    "message": "FOVILO 播放页控件"
+  },
+  "homeRegion": {
+    "message": "FOVILO 首页控件"
+  },
+  "searchRegion": {
+    "message": "FOVILO 搜索页控件"
+  },
+  "keyboardShortcuts": {
+    "message": "键盘快捷键"
+  },
+  "shortcutHelp": {
+    "message": "请在浏览器的扩展程序页面打开「键盘快捷键」。"
+  },
+  "settingsUnavailable": {
+    "message": "无法读取设置。"
+  },
+  "settingsError": {
+    "message": "无法保存设置。"
+  },
+  "settingsRetry": {
+    "message": "无法保存设置，请重试。"
+  },
+  "commands": {
+    "message": "命令"
+  },
+  "close": {
+    "message": "关闭"
+  },
+  "findCommand": {
+    "message": "查找命令"
+  },
+  "recentCommands": {
+    "message": "最近使用"
+  },
+  "noMatchingCommands": {
+    "message": "没有匹配的命令。"
+  },
+  "returnNative": {
+    "message": "恢复原生 YouTube"
+  },
+  "subscriptions": {
+    "message": "订阅"
+  },
+  "openSubscriptions": {
+    "message": "打开订阅页"
+  },
+  "compactResults": {
+    "message": "紧凑结果"
+  },
+  "searchCompactControls": {
+    "message": "搜索页控件 · 紧凑"
+  },
+  "compactEnabled": {
+    "message": "已启用紧凑搜索结果。"
+  },
+  "standardSearchRestored": {
+    "message": "已恢复标准搜索间距。"
+  },
+  "toggleCompactResults": {
+    "message": "切换紧凑结果"
+  },
+  "toggleHomeControls": {
+    "message": "展开或折叠首页控件"
+  },
+  "toggleSearchControls": {
+    "message": "展开或折叠搜索页控件"
+  },
+  "toggleWatchControls": {
+    "message": "展开或折叠播放页控件"
+  },
+  "copyTimeLink": {
+    "message": "复制时间链接"
+  },
+  "focus": {
+    "message": "专注"
+  },
+  "cinema": {
+    "message": "影院"
+  },
+  "toggleFocus": {
+    "message": "切换专注模式"
+  },
+  "toggleCinema": {
+    "message": "切换影院模式"
+  },
+  "watchControlsMode": {
+    "message": "播放页控件 · $1"
+  },
+  "recommendationsHidden": {
+    "message": "已收起推荐。"
+  },
+  "cinemaEnabled": {
+    "message": "已启用影院模式。"
+  },
+  "everydayRestored": {
+    "message": "已恢复日常模式。"
+  },
+  "manualTimeLink": {
+    "message": "可手动复制的时间链接"
+  },
+  "timestampUnavailable": {
+    "message": "当前无法获取视频时间。"
+  },
+  "timeLinkCopied": {
+    "message": "已复制时间链接。"
+  },
+  "clipboardUnavailable": {
+    "message": "无法写入剪贴板，请手动复制链接。"
+  }
+}

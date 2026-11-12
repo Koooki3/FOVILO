@@ -1,4 +1,5 @@
 import { createBrowseRail } from './browse-rail.ts';
+import { t } from './i18n.ts';
 
 let compact = false;
 
@@ -16,13 +17,13 @@ export function mountSearch(anchor: Element) {
   `;
   host.append(styles);
   const density = document.createElement('button');
-  density.textContent = 'Compact results';
+  density.textContent = t('compactResults');
   actions.append(density);
 
   function showDensity() {
     host.dataset.foviloDensity = compact ? 'compact' : 'comfortable';
     density.setAttribute('aria-pressed', String(compact));
-    toggle.textContent = compact ? 'Search controls · Compact' : 'Search controls';
+    toggle.textContent = t(compact ? 'searchCompactControls' : 'searchControls');
   }
   showDensity();
 
@@ -30,12 +31,12 @@ export function mountSearch(anchor: Element) {
     if (!current()) return;
     compact = !compact;
     showDensity();
-    status.textContent = compact ? 'Compact search results.' : 'Standard search spacing restored.';
+    status.textContent = t(compact ? 'compactEnabled' : 'standardSearchRestored');
   }
   density.addEventListener('click', (event) => {
     if (event.isTrusted) toggleDensity();
   }, { signal });
-  const openCommands = addCommands([{ id: 'search.toggle-compact', label: 'Toggle compact results', run: toggleDensity }]);
+  const openCommands = addCommands([{ id: 'search.toggle-compact', label: t('toggleCompactResults'), run: toggleDensity }]);
 
   anchor.prepend(host);
   return { anchor, host, openCommands, dispose };

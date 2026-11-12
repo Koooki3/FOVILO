@@ -4,6 +4,8 @@
 
 FOVILO is an experimental Chromium extension for desktop YouTube. **Return to YouTube** restores the native layout and saves the global off setting. Use the extension popup to re-enable FOVILO or toggle the Home, Watch and Search controls independently.
 
+The interface uses Simplified Chinese for compatible browser languages and falls back to English for other languages.
+
 Everyday emphasizes the video title, channel and metadata in the native Watch layout. Its controls follow YouTube's light or dark appearance.
 
 Choose **Focus** on a supported video to hide the recommendations beside it. Choose **Focus** again to restore them. Focus resets when the video changes. The control is available on regular Watch pages with a supported recommendations area.

@@ -1,0 +1,131 @@
+{
+  "extensionDescription": {
+    "message": "Reversible controls for YouTube Home, Search and Watch."
+  },
+  "shortcutDescription": {
+    "message": "Open FOVILO Commands"
+  },
+  "enableFovilo": {
+    "message": "Enable FOVILO"
+  },
+  "watchControls": {
+    "message": "Watch controls"
+  },
+  "homeControls": {
+    "message": "Home controls"
+  },
+  "searchControls": {
+    "message": "Search controls"
+  },
+  "watchRegion": {
+    "message": "FOVILO Watch controls"
+  },
+  "homeRegion": {
+    "message": "FOVILO Home controls"
+  },
+  "searchRegion": {
+    "message": "FOVILO Search controls"
+  },
+  "keyboardShortcuts": {
+    "message": "Keyboard shortcuts"
+  },
+  "shortcutHelp": {
+    "message": "Open Keyboard shortcuts from the browser extensions page."
+  },
+  "settingsUnavailable": {
+    "message": "Settings are unavailable."
+  },
+  "settingsError": {
+    "message": "Could not save the setting."
+  },
+  "settingsRetry": {
+    "message": "Could not save the setting. Try again."
+  },
+  "commands": {
+    "message": "Commands"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "findCommand": {
+    "message": "Find a command"
+  },
+  "recentCommands": {
+    "message": "Recent commands"
+  },
+  "noMatchingCommands": {
+    "message": "No matching commands."
+  },
+  "returnNative": {
+    "message": "Return to YouTube"
+  },
+  "subscriptions": {
+    "message": "Subscriptions"
+  },
+  "openSubscriptions": {
+    "message": "Open Subscriptions"
+  },
+  "compactResults": {
+    "message": "Compact results"
+  },
+  "searchCompactControls": {
+    "message": "Search controls · Compact"
+  },
+  "compactEnabled": {
+    "message": "Compact search results."
+  },
+  "standardSearchRestored": {
+    "message": "Standard search spacing restored."
+  },
+  "toggleCompactResults": {
+    "message": "Toggle compact results"
+  },
+  "toggleHomeControls": {
+    "message": "Toggle Home controls"
+  },
+  "toggleSearchControls": {
+    "message": "Toggle Search controls"
+  },
+  "toggleWatchControls": {
+    "message": "Toggle Watch controls"
+  },
+  "copyTimeLink": {
+    "message": "Copy time link"
+  },
+  "focus": {
+    "message": "Focus"
+  },
+  "cinema": {
+    "message": "Cinema"
+  },
+  "toggleFocus": {
+    "message": "Toggle Focus"
+  },
+  "toggleCinema": {
+    "message": "Toggle Cinema"
+  },
+  "watchControlsMode": {
+    "message": "Watch controls · $1"
+  },
+  "recommendationsHidden": {
+    "message": "Recommendations hidden."
+  },
+  "cinemaEnabled": {
+    "message": "Cinema enabled."
+  },
+  "everydayRestored": {
+    "message": "Everyday restored."
+  },
+  "manualTimeLink": {
+    "message": "Time link for manual copying"
+  },
+  "timestampUnavailable": {
+    "message": "The video timestamp is unavailable."
+  },
+  "timeLinkCopied": {
+    "message": "Time link copied."
+  },
+  "clipboardUnavailable": {
+    "message": "Clipboard unavailable. Copy the link manually."
+  }
+}

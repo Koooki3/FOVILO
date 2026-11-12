@@ -1,8 +1,15 @@
+import { language, t } from './i18n.ts';
+
 type Surface = 'watch' | 'search' | 'home';
 
 export function createRail(surface: Surface, expanded: boolean, signal: AbortSignal) {
-  const name = { watch: 'Watch', search: 'Search', home: 'Home' }[surface];
+  const names = {
+    watch: { control: t('watchControls'), region: t('watchRegion') },
+    search: { control: t('searchControls'), region: t('searchRegion') },
+    home: { control: t('homeControls'), region: t('homeRegion') },
+  };
   const host = document.createElement('div');
+  host.lang = language;
   host.setAttribute('data-fovilo-' + surface, '');
   const shadow = host.attachShadow({ mode: 'open' });
   const styles = document.createElement('style');
@@ -41,19 +48,19 @@ export function createRail(surface: Surface, expanded: boolean, signal: AbortSig
     }
   `;
   const panel = document.createElement('section');
-  panel.setAttribute('aria-label', 'FOVILO ' + name + ' controls');
+  panel.setAttribute('aria-label', names[surface].region);
   const heading = document.createElement('div');
   heading.className = 'rail-heading';
   const label = document.createElement('strong');
   label.textContent = 'FOVILO';
   const toggle = document.createElement('button');
-  toggle.textContent = name + ' controls';
+  toggle.textContent = names[surface].control;
   const actions = document.createElement('div');
   actions.className = 'rail-actions';
   actions.id = 'fovilo-' + surface + '-actions';
   toggle.setAttribute('aria-controls', actions.id);
   const restore = document.createElement('button');
-  restore.textContent = 'Return to YouTube';
+  restore.textContent = t('returnNative');
   const status = document.createElement('span');
   status.setAttribute('role', 'status');
 

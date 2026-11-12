@@ -33,3 +33,7 @@ The Home rail appears above the native feed, including the signed-out empty stat
 Each rail exposes the same keyboard-accessible **Commands** launcher, including when the rail is collapsed. The dialog opens with focus on search. It lists actions for the current surface and checks capability before executing. Commands reuse the visible controls' operation handlers. Escape restores the launcher's focus or the prior focus for a browser shortcut. Route disposal closes the dialog. The browser owns shortcut assignment, and FOVILO ships the command unbound.
 
 Recent command selection is stored as up to six command IDs in the current document. The panel shows matching, available recent commands first, newest first, followed by the other commands. Keyboard order follows the same sequence. The global recovery action remains in the regular list so a prior shutdown does not promote it.
+
+## Language
+
+The Home, Search and Watch rails, Commands and popup use the bundled English and Simplified Chinese catalogs. The interface selects Simplified Chinese from the browser's language preference and uses English as its fallback. Extension-owned roots carry their language for assistive technology. Browser-managed labels such as the shortcut description use the same catalogs through the manifest.

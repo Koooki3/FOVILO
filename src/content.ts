@@ -7,6 +7,7 @@ import { mountHome } from './home.ts';
 import { browseRootSelector } from './browse-rail.ts';
 import { createCommands } from './commands.ts';
 import { onShortcut } from './shortcut.ts';
+import { t } from './i18n.ts';
 
 const ownedSelector = '[data-fovilo-watch], [data-fovilo-search], [data-fovilo-home]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
@@ -109,10 +110,10 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
   pageStyles.textContent = watchStyles;
   host.append(pageStyles);
   const time = document.createElement('button');
-  time.textContent = 'Copy time link';
+  time.textContent = t('copyTimeLink');
   const modes = [
-    { name: 'focus', label: 'Focus', selector: recommendationsSelector, feedback: 'Recommendations hidden.' },
-    { name: 'cinema', label: 'Cinema', selector: cinemaStageSelector + ':has(#movie_player)', feedback: 'Cinema enabled.' },
+    { name: 'focus', label: t('focus'), command: t('toggleFocus'), selector: recommendationsSelector, feedback: t('recommendationsHidden') },
+    { name: 'cinema', label: t('cinema'), command: t('toggleCinema'), selector: cinemaStageSelector + ':has(#movie_player)', feedback: t('cinemaEnabled') },
   ].map((mode) => {
     const button = document.createElement('button');
     button.textContent = mode.label;
@@ -124,7 +125,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
   const link = document.createElement('input');
   link.readOnly = true;
   link.hidden = true;
-  link.setAttribute('aria-label', 'Time link for manual copying');
+  link.setAttribute('aria-label', t('manualTimeLink'));
 
   function current() {
     const url = new URL(location.href);
@@ -152,8 +153,8 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     const next = host.dataset.foviloMode === mode.name ? 'everyday' : mode.name;
     host.dataset.foviloMode = next;
     for (const control of modes) control.button.setAttribute('aria-pressed', String(control.name === next));
-    toggle.textContent = next === 'everyday' ? 'Watch controls' : 'Watch controls · ' + mode.label;
-    status.textContent = next === 'everyday' ? 'Everyday restored.' : mode.feedback;
+    toggle.textContent = next === 'everyday' ? t('watchControls') : t('watchControlsMode', mode.label);
+    status.textContent = next === 'everyday' ? t('everydayRestored') : mode.feedback;
   }
 
   async function copyTimeLink() {
@@ -165,19 +166,19 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     if (!media || !Number.isFinite(media.duration) ||
       !Number.isFinite(media.currentTime) || media.currentTime < 0 ||
       player?.matches('.ad-showing, .ad-interrupting')) {
-      status.textContent = 'The video timestamp is unavailable.';
+      status.textContent = t('timestampUnavailable');
       return;
     }
     const url = timeLink(id, media.currentTime);
     time.setAttribute('aria-disabled', 'true');
     try {
       await navigator.clipboard.writeText(url);
-      if (current() && railExpanded) status.textContent = 'Time link copied.';
+      if (current() && railExpanded) status.textContent = t('timeLinkCopied');
     } catch {
       if (!current() || !railExpanded) return;
       link.value = url;
       link.hidden = false;
-      status.textContent = 'Clipboard unavailable. Copy the link manually.';
+      status.textContent = t('clipboardUnavailable');
       if (shadow.activeElement === time) {
         link.focus();
         link.select();
@@ -196,7 +197,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     } catch {
       returning = false;
       restore.removeAttribute('aria-disabled');
-      if (current()) status.textContent = 'Could not save the setting. Try again.';
+      if (current()) status.textContent = t('settingsRetry');
     }
   }
 
@@ -213,7 +214,7 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
   const commands = createCommands(shadow, [
     {
       id: 'watch.copy-time-link',
-      label: 'Copy time link',
+      label: t('copyTimeLink'),
       run() {
         if (!railExpanded) toggleRail();
         time.focus({ preventScroll: true });
@@ -222,12 +223,12 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     },
     ...modes.map((mode) => ({
       id: 'watch.toggle-' + mode.name,
-      label: 'Toggle ' + mode.label,
+      label: mode.command,
       run: () => toggleMode(mode),
       available: () => supportsMode(mode),
     })),
-    { id: 'watch.toggle-controls', label: 'Toggle Watch controls', run: toggleRail },
-    { id: 'return-native', label: 'Return to YouTube', run: restoreYouTube, remember: false },
+    { id: 'watch.toggle-controls', label: t('toggleWatchControls'), run: toggleRail },
+    { id: 'return-native', label: t('returnNative'), run: restoreYouTube, remember: false },
   ], signal);
   restore.before(commands.trigger);
 

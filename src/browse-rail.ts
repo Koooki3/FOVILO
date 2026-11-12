@@ -1,6 +1,7 @@
 import { createRail } from './rail.ts';
 import { writeSetting } from './settings.ts';
 import { createCommands, type Command } from './commands.ts';
+import { t } from './i18n.ts';
 
 const routes = {
   home: { path: '/', root: 'ytd-browse[page-subtype="home"]:not([hidden])' },
@@ -50,7 +51,7 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
     } catch {
       returning = false;
       restore.removeAttribute('aria-disabled');
-      if (current()) status.textContent = 'Could not save the setting. Try again.';
+      if (current()) status.textContent = t('settingsRetry');
     }
   }
 
@@ -62,11 +63,11 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
   }, { signal });
 
   function addCommands(commands: Command[]) {
-    const name = surface === 'home' ? 'Home' : 'Search';
+    const toggleLabel = t(surface === 'home' ? 'toggleHomeControls' : 'toggleSearchControls');
     const palette = createCommands(shadow, [
       ...commands,
-      { id: surface + '.toggle-controls', label: 'Toggle ' + name + ' controls', run: toggleRail },
-      { id: 'return-native', label: 'Return to YouTube', run: restoreYouTube, remember: false },
+      { id: surface + '.toggle-controls', label: toggleLabel, run: toggleRail },
+      { id: 'return-native', label: t('returnNative'), run: restoreYouTube, remember: false },
     ], signal);
     restore.before(palette.trigger);
     return () => { if (current()) palette.open(true); };

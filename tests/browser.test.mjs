@@ -44,6 +44,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     const dist = resolve('dist');
     context = await chromium.launchPersistentContext(profile, {
       channel: 'chromium',
+      locale: 'en-US',
       args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
     });
     await context.route('**/*', (route) => {
@@ -328,6 +329,7 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.match(extensionId, /^[a-p]{32}$/);
     await manager.goto('chrome-extension://' + extensionId + '/popup.html');
     const worker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
+    const shortcutDescription = await worker.evaluate(() => chrome.i18n.getMessage('shortcutDescription'));
     assert.deepEqual(await worker.evaluate(async () => {
       const command = (await chrome.commands.getAll()).find((entry) => entry.name === 'open-commands');
       return [command?.shortcut, chrome.commands.onCommand.hasListeners()];
@@ -336,8 +338,8 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await manager.getByRole('button', { name: 'Keyboard shortcuts' }).click();
     const shortcuts = await shortcutsPromise;
     await shortcuts.waitForURL('chrome://extensions/shortcuts');
-    await shortcuts.getByText('Open FOVILO Commands', { exact: true }).waitFor();
-    await shortcuts.getByRole('button', { name: /Open FOVILO Commands/ }).click();
+    await shortcuts.getByText(shortcutDescription, { exact: true }).waitFor();
+    await shortcuts.getByRole('button', { name: new RegExp(shortcutDescription) }).click();
     await shortcuts.keyboard.press('Control+Shift+9');
     assert.equal(await worker.evaluate(async () =>
       (await chrome.commands.getAll()).find((entry) => entry.name === 'open-commands')?.shortcut), 'Ctrl+Shift+9');
@@ -520,6 +522,84 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await page.getByRole('link', { name: 'Native action' }).evaluate((link) =>
       link === document.activeElement), true);
     assert.equal(await title.getAttribute('tabindex'), null);
+  } finally {
+    await context?.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
+
+test('Simplified Chinese labels and commands remain usable at 200 percent zoom', async () => {
+  const work = resolve('work');
+  await mkdir(work, { recursive: true });
+  const profile = await mkdtemp(join(work, 'zh-chromium-'));
+  let context;
+  try {
+    const dist = resolve('dist');
+    context = await chromium.launchPersistentContext(profile, {
+      channel: 'chromium', locale: 'zh-CN', viewport: { width: 640, height: 900 },
+      args: ['--disable-extensions-except=' + dist, '--load-extension=' + dist],
+    });
+    await context.route(origin + watch(first), (route) => route.fulfill({
+      contentType: 'text/html',
+      headers: { 'Permissions-Policy': 'clipboard-write=()' },
+      body: `<!doctype html><html lang="zh-CN"><title>中文夹具</title>
+        <ytd-watch-flexy video-id="${first}">
+          <div id="primary-inner"><div id="player"><div id="movie_player">
+            <video class="html5-main-video" src="${audioFixture()}" controls></video>
+          </div></div></div>
+          <div id="above-the-fold"><h1>原生视频标题</h1></div>
+        </ytd-watch-flexy>
+        <ytd-search><div id="primary"><ytd-item-section-renderer><div id="contents">
+          <ytd-video-renderer><a href="${watch(first)}">原生结果</a></ytd-video-renderer>
+        </div></ytd-item-section-renderer></div></ytd-search>
+        <ytd-browse page-subtype="home"><div id="primary">原生首页</div></ytd-browse>
+      </html>`,
+    }));
+    const page = context.pages()[0];
+    await page.goto(origin + watch(first));
+    const rail = page.locator(host);
+    await rail.waitFor();
+    assert.equal(await rail.getAttribute('lang'), 'zh-CN');
+    const manager = await context.newPage();
+    await manager.goto('chrome://extensions/');
+    const item = manager.locator('extensions-item').filter({ hasText: 'FOVILO (Development)' });
+    const id = await item.getAttribute('id');
+    await manager.goto('chrome-extension://' + id + '/popup.html');
+    await manager.getByRole('checkbox', { name: '播放页控件' }).waitFor();
+    assert.equal(await manager.locator('html').getAttribute('lang'), 'zh-CN');
+    assert.equal(await manager.getByRole('button', { name: '键盘快捷键' }).isVisible(), true);
+    await manager.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ index: 0, currentWindow: true });
+      await chrome.tabs.setZoom(tab.id, 2);
+    });
+    await manager.close();
+    await page.waitForFunction(() => innerWidth === 320 && devicePixelRatio >= 2);
+    const launcher = rail.getByRole('button', { name: '命令', exact: true });
+    await launcher.focus();
+    await page.keyboard.press('Enter');
+    const dialog = rail.getByRole('dialog', { name: '命令' });
+    await dialog.getByRole('searchbox', { name: '查找命令' }).fill('影院');
+    await page.keyboard.press('Enter');
+    await rail.getByText('已启用影院模式。').waitFor();
+    assert.equal(await rail.getByRole('button', { name: '影院', exact: true }).getAttribute('aria-pressed'), 'true');
+    assert.equal(await rail.getByRole('button', { name: '播放页控件 · 影院' }).isVisible(), true);
+    await page.waitForFunction(() => document.querySelector('video').readyState > 0);
+    await rail.getByRole('button', { name: '复制时间链接' }).press('Enter');
+    await rail.getByText('无法写入剪贴板，请手动复制链接。').waitFor();
+    const manual = rail.getByRole('textbox', { name: '可手动复制的时间链接' });
+    assert.equal(await manual.inputValue(), origin + watch(first) + '&t=0s');
+    assert.equal(await rail.evaluate((element) => {
+      const panel = element.shadowRoot.querySelector('section');
+      return panel.scrollWidth === panel.clientWidth;
+    }), true);
+
+    await page.evaluate(() => history.pushState(null, '', '/results?search_query=fixture'));
+    const search = page.locator('[data-fovilo-search]');
+    await search.getByRole('button', { name: '紧凑结果' }).press('Enter');
+    await search.getByText('已启用紧凑搜索结果。').waitFor();
+    await page.evaluate(() => history.pushState(null, '', '/'));
+    const home = page.locator('[data-fovilo-home]');
+    assert.equal(await home.getByRole('link', { name: '订阅' }).getAttribute('href'), '/feed/subscriptions');
   } finally {
     await context?.close();
     await rm(profile, { recursive: true, force: true });
