@@ -6,7 +6,7 @@ Use side-by-side comparisons for visual changes and direct download links for th
 
 The development materials include a short looping README preview and an MP4 walkthrough. Use footage and thumbnails with permission, omit private account information, and retain capture provenance. Store screenshots and recordings outside the extension ZIP.
 
-The development ZIP and checksum can be generated with the [release runbook](RELEASE_RUNBOOK.md). The [Watch performance chart](PERFORMANCE_BASELINE.md#development-build-preview) includes observed startup and copy feedback samples. Final store assets and public release links are pending. [Chrome Web Store image guidelines](https://developer.chrome.com/docs/webstore/images)
+The development ZIP and checksum can be generated with the [release runbook](RELEASE_RUNBOOK.md). The [Watch performance chart](PERFORMANCE_BASELINE.md#development-build-preview) includes observed startup and copy feedback samples. The [store listing draft](STORE_LISTING.md) includes bilingual copy, localized screenshots and an icon candidate. Final store assets and public release links are pending.
 
 ## Watch development preview
 

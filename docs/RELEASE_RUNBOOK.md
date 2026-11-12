@@ -35,6 +35,6 @@ Record the candidate commit, browser and OS versions, viewport, language and log
 
 ## Promotion and release
 
-Use [QA results](QA_MATRIX.md), the [risk register](RISK_REGISTER.md) and the [master plan](MASTER_SPEC.md) to review the candidate. Finalize brand and source license, review third-party notices and store policy, and finish the release demo and preview graphics. Validate signed-in layouts, assistive technology, browser compatibility and the performance thresholds on the intended release build. Record the candidate commit, CI run, version, assets, checksum and rollback target before creating a release.
+Use [QA results](QA_MATRIX.md), the [risk register](RISK_REGISTER.md) and the [master plan](MASTER_SPEC.md) to review the candidate. Finalize brand and source license, review third-party notices and store policy, and check the [store listing and media draft](STORE_LISTING.md) against the release build. Validate signed-in layouts, assistive technology, browser compatibility and the performance thresholds on the intended release build. Record the candidate commit, CI run, version, assets, checksum and rollback target before creating a release.
 
 The development ZIP is for local testing. Production tags, GitHub Releases and store submissions follow gate approval and use the promoted source.
