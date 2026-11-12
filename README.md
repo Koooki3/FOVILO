@@ -16,6 +16,8 @@ On Search, **Compact results** reduces spacing between regular video results and
 
 On Home, **Subscriptions** opens YouTube's native subscriptions page from the collapsible **Home controls** rail.
 
+Select **Commands** on Home, Search or Watch to find actions for that page. Use the arrow keys to move through matches, Enter to run a command and Esc to return to the launcher.
+
 ![Live YouTube recording showing time-link feedback and the restored page while playback continues](docs/media/watch-demo.gif)
 
 See the [enabled and restored views](docs/RELEASE_MATERIALS.md#watch-development-preview) and the capture details. Film excerpt © 2008 Blender Foundation, [CC BY 3.0](https://peach.blender.org/about/).

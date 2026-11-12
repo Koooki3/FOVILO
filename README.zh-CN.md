@@ -16,6 +16,8 @@ Everyday 在 YouTube 原生播放页上区分视频标题、频道和元数据�
 
 首页的 **Home controls** 可以折叠。点击其中的 **Subscriptions** 会打开 YouTube 原生订阅页。
 
+在首页、搜索页或播放页打开 **Commands**，即可查找适用于当前页面的操作。方向键选择，Enter 执行，Esc 退出并回到入口按钮。
+
 ![真实 YouTube 页面录屏，展示时间链接复制反馈，以及关闭控件后视频继续播放](docs/media/watch-demo.gif)
 
 查看[启用与恢复对照](docs/RELEASE_MATERIALS.md#watch-development-preview)及录制环境。影片片段 © 2008 Blender Foundation，[CC BY 3.0](https://peach.blender.org/about/)。

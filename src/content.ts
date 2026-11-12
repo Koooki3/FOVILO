@@ -5,6 +5,7 @@ import { createRail } from './rail.ts';
 import { mountSearch } from './search.ts';
 import { mountHome } from './home.ts';
 import { browseRootSelector } from './browse-rail.ts';
+import { createCommands } from './commands.ts';
 
 const ownedSelector = '[data-fovilo-watch], [data-fovilo-search], [data-fovilo-home]';
 const navigation = (window as Window & { navigation?: EventTarget }).navigation;
@@ -122,28 +123,31 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
       watchRoot(id)?.contains(anchor);
   }
 
-  toggle.addEventListener('click', (event) => {
-    if (!event.isTrusted || !current()) return;
+  function toggleRail() {
+    if (!current()) return;
     railExpanded = !railExpanded;
     setExpanded(railExpanded);
     if (!railExpanded) link.hidden = true;
-  }, { signal });
-
-  for (const mode of modes) {
-    mode.button.addEventListener('click', (event) => {
-      if (!event.isTrusted || !modesAvailable || !current()) return;
-      const root = watchRoot(id);
-      if (!root || root.hasAttribute('is-live') || !unique(root, mode.selector)) return;
-      const next = host.dataset.foviloMode === mode.name ? 'everyday' : mode.name;
-      host.dataset.foviloMode = next;
-      for (const control of modes) control.button.setAttribute('aria-pressed', String(control.name === next));
-      toggle.textContent = next === 'everyday' ? 'Watch controls' : 'Watch controls · ' + mode.label;
-      status.textContent = next === 'everyday' ? 'Everyday restored.' : mode.feedback;
-    }, { signal });
   }
 
-  time.addEventListener('click', async (event) => {
-    if (!event.isTrusted || time.hasAttribute('aria-disabled') || !current()) return;
+  type Mode = typeof modes[number];
+  function supportsMode(mode: Mode) {
+    if (!modesAvailable || !current()) return false;
+    const root = watchRoot(id);
+    return Boolean(root && !root.hasAttribute('is-live') && unique(root, mode.selector));
+  }
+
+  function toggleMode(mode: Mode) {
+    if (!supportsMode(mode)) return;
+    const next = host.dataset.foviloMode === mode.name ? 'everyday' : mode.name;
+    host.dataset.foviloMode = next;
+    for (const control of modes) control.button.setAttribute('aria-pressed', String(control.name === next));
+    toggle.textContent = next === 'everyday' ? 'Watch controls' : 'Watch controls · ' + mode.label;
+    status.textContent = next === 'everyday' ? 'Everyday restored.' : mode.feedback;
+  }
+
+  async function copyTimeLink() {
+    if (time.hasAttribute('aria-disabled') || !current()) return;
     link.hidden = true;
     const root = watchRoot(id);
     const media = root && currentMedia(root, id);
@@ -171,10 +175,10 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
     } finally {
       time.removeAttribute('aria-disabled');
     }
-  }, { signal });
+  }
 
-  restore.addEventListener('click', async (event) => {
-    if (!event.isTrusted || returning || !current()) return;
+  async function restoreYouTube() {
+    if (returning || !current()) return;
     returning = true;
     restore.setAttribute('aria-disabled', 'true');
     try {
@@ -184,7 +188,36 @@ function mountWatch(id: string, anchor: Element, modesAvailable: boolean): Surfa
       restore.removeAttribute('aria-disabled');
       if (current()) status.textContent = 'Could not save the setting. Try again.';
     }
-  }, { signal });
+  }
+
+  function onClick(button: HTMLButtonElement, run: () => void) {
+    button.addEventListener('click', (event) => {
+      if (event.isTrusted) run();
+    }, { signal });
+  }
+  onClick(toggle, toggleRail);
+  onClick(time, copyTimeLink);
+  onClick(restore, restoreYouTube);
+  for (const mode of modes) onClick(mode.button, () => toggleMode(mode));
+
+  const commands = createCommands(shadow, [
+    {
+      label: 'Copy time link',
+      run() {
+        if (!railExpanded) toggleRail();
+        time.focus({ preventScroll: true });
+        void copyTimeLink();
+      },
+    },
+    ...modes.map((mode) => ({
+      label: 'Toggle ' + mode.label,
+      run: () => toggleMode(mode),
+      available: () => supportsMode(mode),
+    })),
+    { label: 'Toggle Watch controls', run: toggleRail },
+    { label: 'Return to YouTube', run: restoreYouTube },
+  ], signal);
+  restore.before(commands);
 
   actions.append(time, ...modes.map((mode) => mode.button));
   panel.append(link);

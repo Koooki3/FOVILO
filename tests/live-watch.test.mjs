@@ -76,8 +76,9 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
     const spacing = () => resultRow.evaluate((element) => getComputedStyle(element).marginBlockStart);
     const nativeSpacing = await spacing();
     const thumbnail = resultRow.locator('#dismissible > ytd-thumbnail');
-    await density.focus();
-    await page.keyboard.press('Space');
+    await searchRail.getByRole('button', { name: 'Commands', exact: true }).click();
+    await searchRail.getByRole('searchbox', { name: 'Find a command' }).fill('compact results');
+    await page.keyboard.press('Enter');
     assert.equal(await density.getAttribute('aria-pressed'), 'true');
     assert.equal(await spacing(), '8px');
     assert.equal(await thumbnail.evaluate((element) => getComputedStyle(element).maxInlineSize), '360px');
@@ -184,6 +185,22 @@ test('signed-out YouTube navigation and persistent recovery', { timeout: 120_000
       assert.equal(await mode.evaluate((button) => button.getRootNode().activeElement === button), true);
       await page.keyboard.press('Tab');
     }
+    const commands = host.getByRole('button', { name: 'Commands', exact: true });
+    assert.equal(await commands.evaluate((button) => button.getRootNode().activeElement === button), true);
+    await page.keyboard.press('Enter');
+    const dialog = host.getByRole('dialog', { name: 'Commands' });
+    const commandSearch = dialog.getByRole('searchbox', { name: 'Find a command' });
+    await commandSearch.fill('copy time');
+    assert.equal(await dialog.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      return bounds.left >= 0 && bounds.right <= innerWidth &&
+        bounds.top >= 0 && bounds.bottom <= innerHeight;
+    }), true);
+    await page.keyboard.press('Escape');
+    await dialog.waitFor({ state: 'hidden' });
+    assert.equal(await commands.evaluate((button) => button.getRootNode().activeElement === button), true);
+    t.diagnostic('Watch Commands fit at 200% zoom and Escape restored the launcher focus');
+    await page.keyboard.press('Tab');
     await page.waitForFunction(() => document.querySelector('[data-fovilo-watch]').shadowRoot.activeElement?.textContent === 'Return to YouTube');
     await page.keyboard.press('Enter');
     await host.waitFor({ state: 'detached' });
@@ -214,10 +231,13 @@ test('Home rail leads to native Subscriptions and leaves the destination alone',
     await page.keyboard.press('Enter');
     await page.keyboard.press('Tab');
     assert.equal(await link.evaluate((anchor) => anchor.getRootNode().activeElement === anchor), true);
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Enter');
+    await rail.getByRole('searchbox', { name: 'Find a command' }).fill('open subscriptions');
     await page.keyboard.press('Enter');
     await page.waitForURL((url) => url.origin === origin && url.pathname === '/feed/subscriptions');
     await rail.waitFor({ state: 'detached' });
-    t.diagnostic('Keyboard navigation followed the native Subscriptions link and removed the Home rail');
+    t.diagnostic('The keyboard command opened native Subscriptions and removed the Home rail');
   }),
 );
 

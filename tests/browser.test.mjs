@@ -143,6 +143,29 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await page.getByText('Time link copied.').waitFor();
     await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
+    const commands = page.getByRole('button', { name: 'Commands', exact: true });
+    const commandDialog = page.getByRole('dialog', { name: 'Commands' });
+    const commandSearch = commandDialog.getByRole('searchbox', { name: 'Find a command' });
+    await commands.click();
+    assert.equal(await commandSearch.evaluate((input) => input.getRootNode().activeElement === input), true);
+    await commandSearch.fill('no matching operation');
+    await commandDialog.getByText('No matching commands.').waitFor();
+    await page.keyboard.press('Enter');
+    assert.equal(await commandDialog.isVisible(), true);
+    await page.keyboard.press('Escape');
+    await commandDialog.waitFor({ state: 'hidden' });
+    assert.equal(await commands.evaluate((button) => button.getRootNode().activeElement === button), true);
+    await rail.click();
+    await commands.click();
+    await commandSearch.fill('copy link');
+    await page.keyboard.press('ArrowDown');
+    const commandCopy = commandDialog.getByRole('button', { name: 'Copy time link' });
+    assert.equal(await commandCopy.evaluate((button) => button.getRootNode().activeElement === button), true);
+    await page.keyboard.press('Enter');
+    await commandDialog.waitFor({ state: 'hidden' });
+    await page.getByText('Time link copied.').waitFor();
+    assert.equal(await rail.getAttribute('aria-expanded'), 'true');
+    assert.equal(await page.evaluate(() => navigator.clipboard.readText()), origin + watch(first) + '&t=2s');
     await page.locator('#movie_player').evaluate((el) => el.classList.add('ad-showing'));
     await page.evaluate(() => { window.nativeVideo.currentTime = 1; });
     await page.getByRole('button', { name: 'Copy time link' }).click();
@@ -195,6 +218,10 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     assert.equal(await focus.count(), 0);
     assert.equal(await cinema.count(), 0);
     assert.equal(await matte(), 'none');
+    await commands.click();
+    await commandSearch.fill('focus');
+    await commandDialog.getByText('No matching commands.').waitFor();
+    await page.keyboard.press('Escape');
     await page.evaluate(() => history.back());
     await focus.waitFor();
     assert.equal(await focus.getAttribute('aria-pressed'), 'false');
@@ -204,9 +231,12 @@ test('built MV3 extension mounts, rejects stale routes, and restores native node
     await rail.click();
     assert.equal(await rail.getAttribute('aria-expanded'), 'false');
     assert.equal(await rail.innerText(), 'Watch controls · Cinema');
+    await commands.click();
+    await commandDialog.waitFor();
 
     await page.evaluate((path) => history.pushState(null, '', path), watch(second));
     await page.locator(host).waitFor({ state: 'detached' });
+    assert.equal(await commandDialog.count(), 0);
     await recommendations.waitFor();
     assert.equal(await matte(), 'none');
     await page.evaluate((id) => {

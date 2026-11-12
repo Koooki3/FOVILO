@@ -1,5 +1,6 @@
 import { createRail } from './rail.ts';
 import { writeSetting } from './settings.ts';
+import { createCommands, type Command } from './commands.ts';
 
 const routes = {
   home: { path: '/', root: 'ytd-browse[page-subtype="home"]:not([hidden])' },
@@ -17,7 +18,7 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
   const scope = new AbortController();
   const { signal } = scope;
   const rail = createRail(surface, expandedBySurface[surface], signal);
-  const { host, toggle, restore, status, setExpanded } = rail;
+  const { host, shadow, toggle, restore, status, setExpanded } = rail;
   const styles = document.createElement('style');
   const selector = '[data-fovilo-' + surface + ']';
   styles.textContent = `
@@ -33,15 +34,15 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
       anchor.closest(routes[surface].root);
   }
 
-  toggle.addEventListener('click', (event) => {
-    if (!event.isTrusted || !current()) return;
+  function toggleRail() {
+    if (!current()) return;
     const expanded = !expandedBySurface[surface];
     expandedBySurface[surface] = expanded;
     setExpanded(expanded);
-  }, { signal });
+  }
 
-  restore.addEventListener('click', async (event) => {
-    if (!event.isTrusted || !current() || returning) return;
+  async function restoreYouTube() {
+    if (!current() || returning) return;
     returning = true;
     restore.setAttribute('aria-disabled', 'true');
     try {
@@ -51,7 +52,23 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
       restore.removeAttribute('aria-disabled');
       if (current()) status.textContent = 'Could not save the setting. Try again.';
     }
+  }
+
+  toggle.addEventListener('click', (event) => {
+    if (event.isTrusted) toggleRail();
   }, { signal });
+  restore.addEventListener('click', (event) => {
+    if (event.isTrusted) void restoreYouTube();
+  }, { signal });
+
+  function addCommands(commands: Command[]) {
+    const name = surface === 'home' ? 'Home' : 'Search';
+    restore.before(createCommands(shadow, [
+      ...commands,
+      { label: 'Toggle ' + name + ' controls', run: toggleRail },
+      { label: 'Return to YouTube', run: restoreYouTube },
+    ], signal));
+  }
 
   function dispose() {
     if (returning && current() && document.activeElement === host) {
@@ -61,5 +78,5 @@ export function createBrowseRail(surface: BrowseSurface, anchor: Element) {
     host.remove();
   }
 
-  return { ...rail, signal, current, dispose };
+  return { ...rail, signal, current, dispose, addCommands };
 }

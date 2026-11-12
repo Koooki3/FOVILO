@@ -6,7 +6,7 @@ const results = 'ytd-search #primary:has(> [data-fovilo-search][data-fovilo-dens
   'ytd-item-section-renderer > #contents > ytd-video-renderer';
 
 export function mountSearch(anchor: Element) {
-  const { host, toggle, actions, status, signal, current, dispose } = createBrowseRail('search', anchor);
+  const { host, toggle, actions, status, signal, current, dispose, addCommands } = createBrowseRail('search', anchor);
   const styles = document.createElement('style');
   styles.textContent = `
     ${results} { margin-block-start: 8px; }
@@ -26,12 +26,16 @@ export function mountSearch(anchor: Element) {
   }
   showDensity();
 
-  density.addEventListener('click', (event) => {
-    if (!event.isTrusted || !current()) return;
+  function toggleDensity() {
+    if (!current()) return;
     compact = !compact;
     showDensity();
     status.textContent = compact ? 'Compact search results.' : 'Standard search spacing restored.';
+  }
+  density.addEventListener('click', (event) => {
+    if (event.isTrusted) toggleDensity();
   }, { signal });
+  addCommands([{ label: 'Toggle compact results', run: toggleDensity }]);
 
   anchor.prepend(host);
   return { anchor, host, dispose };

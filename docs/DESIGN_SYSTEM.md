@@ -27,3 +27,7 @@ The same rail sits at the start of the primary results column. Compact density r
 ## Context Rail on Home
 
 The Home rail appears above the native feed, including the signed-out empty state. It links to YouTube's Subscriptions page with a standard anchor and shares the Search rail's disclosure and recovery behavior. It uses a separate popup switch.
+
+## Commands
+
+Each rail exposes the same keyboard-accessible **Commands** launcher, including when the rail is collapsed. The dialog opens with focus on search. It lists actions for the current surface and checks capability before executing. Commands reuse the visible controls' operation handlers. Escape returns focus to the launcher and route disposal closes the dialog. The first version uses a visible launcher and local dialog keys.
